@@ -1,0 +1,37 @@
+{
+  "name": "rapide",
+  "version": "0.0.1",
+  "description": "web dev build tool",
+  "author": "wkj",
+  "license": "MIT",
+  "main": "bin/index.js",
+  "bin": {
+    "rapide": "bin/index.js"
+  },
+  "scripts": {
+    "pre-dev": "rimraf cache && rimraf dist",
+    "dev-client": "tsc -w --incremental --p client",
+    "dev-server": "tsc -w --incremental --p server",
+    "start-server": "yarn build-server && node dist/server/index.js",
+    "format": "prettier --write \"(client|server)/**/*.ts\"",
+    "build": "yarn pre-dev && tsc --p client && tsc --p server"
+  },
+  "dependencies": {
+    "cjs-module-lexer": "^1.2.1",
+    "esbuild": "^0.12.14"
+  },
+  "devDependencies": {
+    "@types/ws": "^7.4.6",
+    "chokidar": "^3.5.2",
+    "prettier": "2.3.2",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.3.5",
+    "ws": "^7.5.1"
+  },
+  "prettier": {
+    "tabWidth": 4,
+    "semi": false,
+    "singleQuote": true,
+    "arrowParens": "avoid"
+  }
+}
