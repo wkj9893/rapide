@@ -20,19 +20,35 @@ export async function createServer() {
         const entryPoints = []
         for (const dependency of Object.keys(dependencies)) {
             const main = JSON.parse(
-                fs.readFileSync(path.resolve(rootPath, `node_modules/${dependency}/package.json`), 'utf8')
+                fs.readFileSync(
+                    path.resolve(
+                        rootPath,
+                        `node_modules/${dependency}/package.json`
+                    ),
+                    'utf8'
+                )
             ).main
-            const filePath = path.resolve(rootPath,'node_modules',dependency,main)
+            const filePath = path.resolve(
+                rootPath,
+                'node_modules',
+                dependency,
+                main
+            )
             if (fs.existsSync(filePath)) {
                 entryPoints.push(filePath)
             }
             console.time('cjs')
             const cjsExports = await getExports(filePath)
-            await writeFileString(path.resolve(cachePath,`node_modules/${dependency}/mod.js`),`import _default from './index.js';\nexport { default } from './index.js';\nexport const { ${cjsExports.join(', ')} } = _default`)
+            await writeFileString(
+                path.resolve(cachePath, `node_modules/${dependency}/mod.js`),
+                `import _default from './index.js';\nexport { default } from './index.js';\nexport const { ${cjsExports.join(
+                    ', '
+                )} } = _default`
+            )
             console.timeEnd('cjs')
         }
         console.time('build')
-        await buildFiles(entryPoints, path.resolve(cachePath,'node_modules'))
+        await buildFiles(entryPoints, path.resolve(cachePath, 'node_modules'))
         console.timeEnd('build')
     }
 

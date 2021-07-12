@@ -7,7 +7,7 @@ const version = require('../package.json').version;
 const args = process.argv.slice(2)
 
 if (!args[0] || args[0] === 'dev') {
-    require('../dist/server/index')
+    require('../index')
 } else if (args[0] === 'build') {
     //  TODO build
     console.log('build')

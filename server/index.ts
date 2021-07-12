@@ -3,7 +3,6 @@ import { resolveRoot } from './utils/path'
 import { createServer } from './server'
 import watch from './watch'
 
-
 export const MEDIA_TYPES: Record<string, string> = {
     '.md': 'text/markdown',
     '.html': 'text/html',
@@ -37,9 +36,9 @@ export const cachePath = __dirname
     .replace('dist', 'cache')
     .replace('server', '')
 
-export const rootPath = resolveRoot();
+export const rootPath = resolveRoot()
 
-(async function (){
+;(async function () {
     const server = await createServer()
 
     server.listen(3000)
