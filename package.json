@@ -33,7 +33,8 @@
     "format": "prettier --write \"(client|server)/**/*.ts\"",
     "build-types": "rimraf types && tsc --declaration --emitDeclarationOnly --outDir types -p server",
     "build-server": "rimraf dist && esbuild server/index.ts --bundle --minify --platform=node --outfile=index.js --external:esbuild",
-    "build": "yarn build-types && yarn build-server"
+    "build": "yarn build-types && yarn build-server",
+    "release": "node scripts/release.js"
   },
   "dependencies": {
     "esbuild": "^0.12.15"
@@ -43,7 +44,9 @@
     "chokidar": "^3.5.2",
     "cjs-module-lexer": "^1.2.1",
     "prettier": "2.3.2",
+    "prompts": "^2.4.1",
     "rimraf": "^3.0.2",
+    "semver": "^7.3.5",
     "typescript": "^4.3.5",
     "ws": "^7.5.1"
   },
