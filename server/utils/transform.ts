@@ -15,10 +15,10 @@ export type Loader =
     | 'default'
 
 export default async function transform(code: string, loader: Loader) {
-    // console.log(code,loader)
     return await trans(code, {
         format: 'esm',
         loader,
+        sourcemap: true,
         tsconfigRaw: `{
             "compilerOptions": {
                 "target": "esnext",

@@ -10,24 +10,26 @@ import { cachePath, rootPath, MEDIA_TYPES, updateMap, loaderMap } from '.'
 
 export async function createServer() {
     console.time('server')
-    // fs.rmSync(cachePath, { recursive: true, force: true })
-    // fs.mkdirSync(cachePath, { recursive: true })
+    fs.rmSync(cachePath, { recursive: true, force: true })
+    fs.mkdirSync(cachePath, { recursive: true })
     const packageJsonPath = path.resolve(rootPath, 'package.json')
     if (fs.existsSync(packageJsonPath)) {
         const dependencies = JSON.parse(
             fs.readFileSync(packageJsonPath, 'utf8')
         ).dependencies
         const entryPoints = []
+        const promises:Promise<void>[] = []
         for (const dependency of Object.keys(dependencies)) {
-            const main = JSON.parse(
-                fs.readFileSync(
-                    path.resolve(
-                        rootPath,
-                        `node_modules/${dependency}/package.json`
-                    ),
-                    'utf8'
-                )
-            ).main
+            const main =
+                JSON.parse(
+                    fs.readFileSync(
+                        path.resolve(
+                            rootPath,
+                            `node_modules/${dependency}/package.json`
+                        ),
+                        'utf8'
+                    )
+                ).main ?? 'index.js'
             const filePath = path.resolve(
                 rootPath,
                 'node_modules',
@@ -37,19 +39,10 @@ export async function createServer() {
             if (fs.existsSync(filePath)) {
                 entryPoints.push(filePath)
             }
-            console.time('cjs')
-            const cjsExports = await getExports(filePath)
-            await writeFileString(
-                path.resolve(cachePath, `node_modules/${dependency}/mod.js`),
-                `import _default from './index.js';\nexport { default } from './index.js';\nexport const { ${cjsExports.join(
-                    ', '
-                )} } = _default`
-            )
-            console.timeEnd('cjs')
+            promises.push(writeModFile(dependency,filePath))
         }
-        console.time('build')
-        await buildFiles(entryPoints, path.resolve(cachePath, 'node_modules'))
-        console.timeEnd('build')
+        promises.push(buildFiles(entryPoints, path.resolve(cachePath, 'node_modules')))
+        await Promise.all(promises)
     }
 
     const server = http.createServer(async (req, res) => {
@@ -92,6 +85,7 @@ export async function createServer() {
 
         const cacheFilePath = path.join(cachePath, url)
         const codePath = path.join(rootPath, url)
+
         if (fs.existsSync(cacheFilePath) && !updateMap.get(codePath)) {
             const data = await readFileBuffer(cacheFilePath)
             res.writeHead(200, {
@@ -112,7 +106,6 @@ export async function createServer() {
             ) {
                 code = await importAnalysis(code, codePath)
             }
-            // console.log(code)
             const loader = loaderMap[path.extname(codePath)] ?? 'default'
             await writeFileString(
                 cacheFilePath,
@@ -134,4 +127,15 @@ export async function createServer() {
     })
     console.timeEnd('server')
     return server
+}
+
+
+async function writeModFile(dependency:string,filePath:string) {
+    const cjsExports = await getExports(filePath)
+    await writeFileString(
+        path.resolve(cachePath, `node_modules/${dependency}/mod.js`),
+        `import _default from './index.js';\nexport { default } from './index.js';\nexport const { ${cjsExports.join(
+            ', '
+        )} } = _default`
+    )
 }

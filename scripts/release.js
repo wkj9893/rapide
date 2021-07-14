@@ -89,8 +89,8 @@ async function main() {
     run('git', ['commit', '-m', `release: ${tag}`])
 
 
-    // blueBright('\nPublishing package...')
-    // publishPackage(targetVersion)
+    blueBright('\nPublishing package...')
+    publishPackage(targetVersion)
 
     blueBright('\nPushing to GitHub...')
     run('git', ['tag', tag])

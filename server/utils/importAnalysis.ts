@@ -104,6 +104,5 @@ export default async function importAnalysis(code: string, codePath: string) {
         res += code[i]
         i++
     }
-    console.log(res)
     return res
 }
