@@ -1,6 +1,6 @@
 {
   "name": "rapide",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "web dev build tool",
   "author": "wkj",
   "license": "MIT",
@@ -10,14 +10,12 @@
   "main": "index.js",
   "types": "types/index.d.ts",
   "bin": {
-    "rapide": "bin/index.js"
+    "rapide": "index.js"
   },
   "files": [
-    "bin",
     "types",
     "index.js"
   ],
-  "homepage": "https://github.com/wkj9893/rapide",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wkj9893/rapide.git"
@@ -26,27 +24,22 @@
     "url": "https://github.com/wkj9893/rapide/issues"
   },
   "scripts": {
-    "pre-dev": "rimraf cache && rimraf dist",
-    "dev-client": "tsc -w --incremental -p client",
-    "dev-server": "tsc -w --incremental -p server",
-    "start-server": "yarn build-server && node dist/server/index.js",
     "format": "prettier --write \"(client|server)/**/*.ts\"",
     "build-types": "rimraf types && tsc --declaration --emitDeclarationOnly --outDir types -p server",
-    "build-server": "rimraf dist && esbuild server/index.ts --bundle --minify --platform=node --outfile=index.js --external:esbuild",
-    "build": "yarn build-types && yarn build-server",
-    "release": "node scripts/release.js"
+    "watch":"esbuild index.ts --bundle --platform=node --outfile=index.js --external:esbuild --watch",
+    "build-server": "rimraf dist && esbuild index.ts --bundle --minify --platform=node --outfile=index.js --external:esbuild",
+    "build": "yarn build-types && yarn build-server"
   },
   "dependencies": {
     "esbuild": "^0.12.15"
   },
   "devDependencies": {
+    "@types/node": "^16.3.2",
     "@types/ws": "^7.4.6",
     "chokidar": "^3.5.2",
     "cjs-module-lexer": "^1.2.1",
     "prettier": "2.3.2",
-    "prompts": "^2.4.1",
     "rimraf": "^3.0.2",
-    "semver": "^7.3.5",
     "typescript": "^4.3.5",
     "ws": "^7.5.1"
   },

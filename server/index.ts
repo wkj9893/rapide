@@ -1,11 +1,10 @@
 import { Loader } from './utils/transform'
 import { resolveRoot } from './utils/path'
 import { createServer } from './server'
-import watch from './watch'
-import fs from "fs"
 import path from "path"
+import watch from './watch'
 
-export const MEDIA_TYPES: Record<string, string> = {
+const MEDIA_TYPES: Record<string, string> = {
     '.md': 'text/markdown',
     '.html': 'text/html',
     '.htm': 'text/html',
@@ -23,7 +22,7 @@ export const MEDIA_TYPES: Record<string, string> = {
     '.svg': 'image/svg+xml',
 }
 
-export const loaderMap: Record<string, Loader> = {
+const loaderMap: Record<string, Loader> = {
     '.js': 'js',
     '.jsx': 'jsx',
     '.ts': 'ts',
@@ -32,25 +31,13 @@ export const loaderMap: Record<string, Loader> = {
     '.json': 'json',
 }
 
-export const updateMap: Map<string, boolean> = new Map()
+const updateMap: Map<string, boolean> = new Map()
 
-export const cachePath = __dirname
-    .replace('dist', 'cache')
-    .replace('server', '')
+const cachePath = path.resolve(__dirname,'cache')
 
 export const rootPath = resolveRoot()
 
-require("assert")
-require("assert/strict")
-require("async_hooks")
-require("buffer")
+export {createServer,watch,updateMap,cachePath,loaderMap,MEDIA_TYPES}
 
-;(async function () {
-    const server = await createServer()
-
-    server.listen(3000)
-})()
-
-watch(rootPath, updateMap)
 
 // open(`http://localhost:${PORT}`)

@@ -8,15 +8,15 @@ import buildFiles from './build'
 import getExports from './utils/exports'
 import { cachePath, rootPath, MEDIA_TYPES, updateMap, loaderMap } from '.'
 
+
 export async function createServer() {
-    console.time('server')
     fs.rmSync(cachePath, { recursive: true, force: true })
     fs.mkdirSync(cachePath, { recursive: true })
     const packageJsonPath = path.resolve(rootPath, 'package.json')
     if (fs.existsSync(packageJsonPath)) {
         const dependencies = JSON.parse(
             fs.readFileSync(packageJsonPath, 'utf8')
-        ).dependencies
+        ).dependencies ?? {}
         const entryPoints = []
         const promises:Promise<void>[] = []
         for (const dependency of Object.keys(dependencies)) {
@@ -125,7 +125,6 @@ export async function createServer() {
             return res.end(error.message)
         }
     })
-    console.timeEnd('server')
     return server
 }
 
