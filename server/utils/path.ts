@@ -29,7 +29,7 @@ export const rootPath = resolveRoot()
  * @param order resolution extension order
  * @returns empty string if unfound else exact filename
  */
-export function resolve(
+export function resolvePath(
     filePath: string,
     order = ['.tsx', '.ts', '.jsx', '.js', '.css', '.json']
 ): Promise<string> {
@@ -71,6 +71,6 @@ export function resolve(
  * @param filePath convert relative path to absolute path starting with /
  * @returns normalized path
  */
-export function normalize(filePath: string): string {
+function normalize(filePath: string): string {
     return '/' + path.relative(rootPath, filePath).split(path.sep).join('/')
 }

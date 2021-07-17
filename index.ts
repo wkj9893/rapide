@@ -2,6 +2,7 @@
 import { createServer, watch, rootPath, updateMap } from './server/index'
 import { version } from './package.json'
 import { cyan, lightBlue } from './server/utils/color'
+import open from './server/utils/open'
 
 const args = process.argv.slice(2)
 
@@ -15,6 +16,7 @@ async function main() {
         console.log(
             cyan(`  ready in ${(performance.now() - startTime).toFixed()}ms`)
         )
+        open('http://localhost:3000')
         watch(rootPath, updateMap)
         return
     }
@@ -34,6 +36,4 @@ async function main() {
     )
 }
 
-main().catch(e => {
-    console.error(e)
-})
+main().catch(e => console.error(e))

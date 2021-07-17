@@ -96,8 +96,10 @@ export async function createServer() {
         }
 
         try {
-            let code = await readFileString(path.join(rootPath, url))
+            let code = await readFileString(codePath)
             const ext = path.extname(codePath)
+            const loader = loaderMap[ext] ?? 'default'
+            code = (await transform(code, loader)).code
             if (
                 ext === '.ts' ||
                 ext === '.js' ||
@@ -106,13 +108,7 @@ export async function createServer() {
             ) {
                 code = await importAnalysis(code, codePath)
             }
-            const loader = loaderMap[path.extname(codePath)] ?? 'default'
-            await writeFileString(
-                cacheFilePath,
-                (
-                    await transform(code, loader)
-                ).code
-            )
+            await writeFileString(cacheFilePath,code)
             updateMap.set(cacheFilePath, false)
             const data = await readFileBuffer(cacheFilePath)
             res.writeHead(200, {
