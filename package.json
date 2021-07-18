@@ -1,6 +1,6 @@
 {
   "name": "rapide",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "web dev build tool",
   "author": "wkj",
   "license": "MIT",
@@ -25,9 +25,9 @@
   },
   "scripts": {
     "format": "prettier --write \"(client|server)/**/*.ts\"",
-    "build-types": "rimraf types && tsc --declaration --emitDeclarationOnly --outDir types -p server",
+    "build-types": "rm -rf types && tsc --declaration --emitDeclarationOnly --outDir types -p server",
     "watch": "esbuild index.ts --bundle --platform=node --outfile=index.js --external:esbuild --watch",
-    "build-server": "rimraf dist && esbuild index.ts --bundle --minify --platform=node --outfile=index.js --external:esbuild",
+    "build-server": "rm -rf dist && esbuild index.ts --bundle --minify --platform=node --outfile=index.js --external:esbuild",
     "build": "yarn build-types && yarn build-server"
   },
   "dependencies": {
@@ -40,7 +40,6 @@
     "cjs-module-lexer": "^1.2.2",
     "es-module-lexer": "^0.7.1",
     "prettier": "2.3.2",
-    "rimraf": "^3.0.2",
     "typescript": "^4.3.5",
     "ws": "^7.5.1"
   },

@@ -39,5 +39,3 @@ export const rootPath = resolveRoot()
 
 export {createServer,watch,updateMap,cachePath,loaderMap,MEDIA_TYPES}
 
-
-// open(`http://localhost:${PORT}`)
