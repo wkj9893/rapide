@@ -1,13 +1,21 @@
-const socket = new WebSocket('ws://localhost:8080')
+export type HMRMessage = ConnectedMessage | ReloadMessage | UpdateMessage
 
-let count = 13
-
-socket.onopen = () => {
-    console.log('[open] Connection established')
+interface ConnectedMessage {
+    type: 'connected'
 }
 
-socket.onmessage = event => {
-    console.log(`[message] receive message ${event.data} from server`)
+interface ReloadMessage {
+    type: 'reload'
+}
+
+interface UpdateMessage {
+    type: 'update'
+}
+
+const socket = new WebSocket('ws://localhost:3000')
+
+socket.onopen = () => {
+    console.log('[connected] Connection Established')
 }
 
 socket.onclose = event => {
@@ -21,4 +29,16 @@ socket.onclose = event => {
 
 socket.onerror = error => {
     console.log(`[error] ${error}`)
+}
+
+socket.onmessage = ({ data }) => {
+    console.log(`[message] receive message ${data} from server`)
+    handleMessage(JSON.parse(data))
+}
+
+function handleMessage(data: HMRMessage) {
+    if (data.type === 'connected') {
+    } else if (data.type === 'reload') {
+        window.location.reload()
+    }
 }

@@ -1,5 +1,10 @@
 #!/usr/bin/env node
-import { createServer, watch, rootPath, updateMap } from './server/index'
+import {
+    preCreateServer,
+    rootPath,
+    updateMap,
+    RapideServer,
+} from './server/index'
 import { version } from './package.json'
 import { cyan, lightBlue } from './server/utils/color'
 
@@ -8,14 +13,14 @@ const args = process.argv.slice(2)
 async function main() {
     if (!args[0] || args[0] === 'dev') {
         const startTime = performance.now()
-        const server = await createServer()
+        await preCreateServer()
+        const server = new RapideServer()
         server.listen(3000)
         console.log(cyan(`\n  rapide ${version}`) + ' dev server running at:\n')
         console.log('  > Local: ' + lightBlue('http://localhost:3000\n'))
         console.log(
             cyan(`  ready in ${(performance.now() - startTime).toFixed()}ms`)
         )
-        watch(rootPath, updateMap)
         return
     }
     if (args[0] === 'build') {
@@ -27,6 +32,10 @@ async function main() {
         return
     }
     if (args[0] === '--help') {
+        console.log('rapide', version)
+        console.log(`OPTIONS:
+    h, --help
+        Prints help information`)
         //  TODO help
     }
     throw new Error(

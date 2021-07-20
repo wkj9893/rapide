@@ -38,3 +38,14 @@ export function writeFileString(filePath: string, data: string): Promise<void> {
         })
     })
 }
+
+export function copyFile(src: string, dest: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        fs.copyFile(src, dest, err => {
+            if (err) {
+                reject(err)
+            }
+            resolve()
+        })
+    })
+}

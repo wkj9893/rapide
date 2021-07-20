@@ -1,4 +1,4 @@
 node_modules
-dist
 cache
 index.js
+client.js

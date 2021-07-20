@@ -5,9 +5,7 @@ function color(start: number, end: number) {
     }
 }
 
-
-const cyan = color(36,39)
+const cyan = color(36, 39)
 const lightBlue = color(94, 39)
 
-
-export {cyan, lightBlue }
+export { cyan, lightBlue }
