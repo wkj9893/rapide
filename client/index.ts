@@ -18,13 +18,25 @@ socket.onopen = () => {
     console.log('[connected] Connection Established')
 }
 
-socket.onclose = event => {
-    if (event.wasClean) {
-        console.log(
-            `[close] Connection closed cleanly, code = ${event.code} reason = ${event.reason}`
-        )
+
+async function waitForRestart(timeout = 1000) {
+    while (true) {
+        try {
+            await fetch('http://localhost:3000')
+            break
+        } catch (error) {
+            await new Promise((resolve) => setTimeout(resolve, timeout))
+        }
     }
-    console.log('[close] Connection died')
+}
+
+socket.onclose = async event => {
+    if (event.wasClean) {
+        return
+    }
+    console.log('[close] Connection Died, Wait For Restart')
+    await waitForRestart()
+    window.location.reload()
 }
 
 socket.onerror = error => {
@@ -32,7 +44,6 @@ socket.onerror = error => {
 }
 
 socket.onmessage = ({ data }) => {
-    console.log(`[message] receive message ${data} from server`)
     handleMessage(JSON.parse(data))
 }
 

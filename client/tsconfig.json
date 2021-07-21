@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
-    "outDir": "../dist/client"
+    "outDir": "../dist/client",
+    "lib": ["ESNext", "DOM"]
   }
 }

@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 import {
     preCreateServer,
-    rootPath,
-    updateMap,
     RapideServer,
 } from './server/index'
 import { version } from './package.json'

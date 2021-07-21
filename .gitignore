@@ -1,4 +1,4 @@
-node_modules
-cache
+node_modules/
+cache/
 index.js
 client.js
