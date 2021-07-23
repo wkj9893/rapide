@@ -9,6 +9,7 @@ import { createWebsocketServer } from './wss'
 import { FSWatcher } from 'chokidar'
 import { HMRMessage } from '../client/index'
 import { preCreateServer } from './preCreateServer'
+import { normalize } from './utils/path'
 
 const MEDIA_TYPES: Record<string, string> = {
     '.md': 'text/markdown',
@@ -56,8 +57,8 @@ class RapideServer {
         this.updateMap = new Map()
         this.watcher.on('change', filePath => {
             updateMap.set(filePath, true)
-            console.log(updateMap)
-            this.send({ type: 'reload' })
+            // updateMap.set(filePath, false)
+            this.send({ type: 'update', update: normalize(filePath) })
         })
     }
 

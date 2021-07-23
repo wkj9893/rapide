@@ -16,6 +16,10 @@ export async function preCreateServer() {
         const entryPoints = []
         const promises: Promise<void>[] = []
         for (const dependency of Object.keys(dependencies)) {
+            //  do not bundle itself
+            if (dependency === 'rapide') {
+                continue
+            }
             const main =
                 JSON.parse(
                     fs.readFileSync(

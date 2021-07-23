@@ -7,7 +7,6 @@ import { init, parse } from 'es-module-lexer'
 export default async function importAnalysis(code: string, codePath: string) {
     await init
     const imports = parse(code)[0].filter(value => value.n)
-    console.log('imports', imports)
 
     let i = 0
     let j = 0

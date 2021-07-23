@@ -71,6 +71,6 @@ export function resolvePath(
  * @param filePath convert relative path to absolute path starting with /
  * @returns normalized path
  */
-function normalize(filePath: string): string {
+export function normalize(filePath: string): string {
     return '/' + path.relative(rootPath, filePath).split(path.sep).join('/')
 }
