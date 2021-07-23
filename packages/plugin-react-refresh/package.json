@@ -1,0 +1,22 @@
+{
+  "name": "@rapide/plugin-react-refresh",
+  "version": "0.0.1",
+  "author": "wkj",
+  "license": "MIT",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "build": "esbuild index.ts --bundle --minify --platform=node --outfile=index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wkj9893/rapide.git",
+    "directory": "packages/plugin-react-refresh"
+  },
+  "devDependencies": {
+    "@types/node": "^16.4.1",
+    "esbuild": "^0.12.15"
+  }
+}

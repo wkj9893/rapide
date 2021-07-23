@@ -1,8 +1,5 @@
 #!/usr/bin/env node
-import {
-    preCreateServer,
-    RapideServer,
-} from './server/index'
+import { preCreateServer, RapideServer } from './server/index'
 import { version } from './package.json'
 import { cyan, lightBlue } from './server/utils/color'
 

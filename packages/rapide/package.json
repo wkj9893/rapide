@@ -1,0 +1,46 @@
+{
+  "name": "rapide",
+  "version": "0.1.2",
+  "description": "web dev build tool",
+  "author": "wkj",
+  "license": "MIT",
+  "keywords": [
+    "rapide"
+  ],
+  "main": "index.js",
+  "types": "types/index.d.ts",
+  "bin": {
+    "rapide": "index.js"
+  },
+  "files": [
+    "types",
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wkj9893/rapide.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wkj9893/rapide/issues"
+  },
+  "scripts": {
+    "format": "prettier --write \"index.ts|(client|server)/**/*.ts\"",
+    "build-types": "rm -rf types && tsc --declaration --emitDeclarationOnly --outDir types -p server",
+    "dev-client": "pnpm esbuild client/index.ts --bundle --outfile=client.js --watch",
+    "build-client": "esbuild client/index.ts --bundle --minify --outfile=client.js",
+    "build-server": "rm -rf dist && esbuild index.ts --bundle --minify --platform=node --outfile=index.js --external:esbuild",
+    "build": "yarn build-types && yarn build-server"
+  },
+  "dependencies": {
+    "esbuild": "^0.12.15"
+  },
+  "devDependencies": {
+    "@types/node": "^16.3.3",
+    "@types/ws": "^7.4.6",
+    "chokidar": "^3.5.2",
+    "cjs-module-lexer": "^1.2.2",
+    "es-module-lexer": "^0.7.1",
+    "typescript": "^4.3.5",
+    "ws": "^7.5.1"
+  }
+}

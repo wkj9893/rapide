@@ -19,14 +19,13 @@ socket.onopen = () => {
     console.log('[connected] Connection Established')
 }
 
-
 async function waitForRestart(timeout = 1000) {
     while (true) {
         try {
             await fetch('/')
             break
         } catch (error) {
-            await new Promise((resolve) => setTimeout(resolve, timeout))
+            await new Promise(resolve => setTimeout(resolve, timeout))
         }
     }
 }
