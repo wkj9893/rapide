@@ -11,6 +11,11 @@ import { HMRMessage } from '../client/index'
 import { preCreateServer } from './preCreateServer'
 import { normalize } from './utils/path'
 
+
+export interface RapideConfig {
+    plugins: string[]
+}
+
 const MEDIA_TYPES: Record<string, string> = {
     '.md': 'text/markdown',
     '.html': 'text/html',
@@ -49,8 +54,10 @@ class RapideServer {
     wss: WebSocketServer
     watcher: FSWatcher
     updateMap: Map<string, boolean>
+    config?: RapideConfig
 
-    constructor() {
+    constructor(config?: RapideConfig) {
+        this.config = config
         this.httpServer = createHttpServer()
         this.wss = createWebsocketServer(this.httpServer)
         this.watcher = createWatcher(rootPath)
@@ -58,7 +65,7 @@ class RapideServer {
         this.watcher.on('change', filePath => {
             updateMap.set(filePath, true)
             // updateMap.set(filePath, false)
-            this.send({ type: 'update', update: normalize(filePath) })
+            this.send({ type: 'reload' })
         })
     }
 

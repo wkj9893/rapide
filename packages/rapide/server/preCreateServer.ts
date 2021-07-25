@@ -3,9 +3,9 @@ import { writeFileString } from './utils/file'
 import fs from 'fs'
 import buildFiles from './utils/build'
 import getExports from './utils/exports'
-import { cachePath, rootPath } from '.'
+import { cachePath, rootPath, RapideConfig } from '.'
 
-export async function preCreateServer() {
+export async function preCreateServer(): Promise<RapideConfig | undefined> {
     fs.rmSync(cachePath, { recursive: true, force: true })
     fs.mkdirSync(cachePath, { recursive: true })
     const packageJsonPath = path.resolve(rootPath, 'package.json')
@@ -45,6 +45,10 @@ export async function preCreateServer() {
             buildFiles(entryPoints, path.resolve(cachePath, 'node_modules'))
         )
         await Promise.all(promises)
+    }
+    const configPath = path.resolve(rootPath, 'rapide.config.json')
+    if (fs.existsSync(configPath)) {
+        return JSON.parse(fs.readFileSync(configPath, 'utf-8'))
     }
 }
 

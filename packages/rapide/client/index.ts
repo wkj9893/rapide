@@ -52,9 +52,6 @@ async function handleMessage(data: HMRMessage) {
     } else if (data.type === 'reload') {
         window.location.reload()
     } else if (data.type === 'update') {
-        const { update } = data
-        //  @ts-ignore
-        const res = await import('/qwe')
-        console.log(res)
+
     }
 }

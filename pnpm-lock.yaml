@@ -10,10 +10,13 @@ importers:
 
   packages/plugin-react-refresh:
     specifiers:
-      '@types/node': ^16.4.1
+      '@types/node': ^16.4.2
       esbuild: ^0.12.15
+      react-refresh: ^0.10.0
+    dependencies:
+      react-refresh: 0.10.0
     devDependencies:
-      '@types/node': 16.4.1
+      '@types/node': 16.4.2
       esbuild: 0.12.15
 
   packages/rapide:
@@ -41,6 +44,10 @@ packages:
 
   /@types/node/16.4.1:
     resolution: {integrity: sha512-UW7cbLqf/Wu5XH2RKKY1cHwUNLicIDRLMraYKz+HHAerJ0ZffUEk+fMnd8qU2JaS6cAy0r8tsaf7yqHASf/Y0Q==}
+    dev: true
+
+  /@types/node/16.4.2:
+    resolution: {integrity: sha512-vxyhOzFCm+jC/T5KugbVsYy1DbQM0h3NCFUrVbu0+pYa/nr+heeucpqxpa8j4pUmIGLPYzboY9zIdOF0niFAjQ==}
     dev: true
 
   /@types/ws/7.4.7:
@@ -157,6 +164,11 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
+
+  /react-refresh/0.10.0:
+    resolution: {integrity: sha512-PgidR3wST3dDYKr6b4pJoqQFpPGNKDSCDx4cZoshjXipw3LzO7mG1My2pwEzz2JVkF+inx3xRpDeQLFQGH/hsQ==}
+    engines: {node: '>=0.10.0'}
+    dev: false
 
   /readdirp/3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}

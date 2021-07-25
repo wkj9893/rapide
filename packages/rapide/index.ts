@@ -8,8 +8,8 @@ const args = process.argv.slice(2)
 async function main() {
     if (!args[0] || args[0] === 'dev') {
         const startTime = performance.now()
-        await preCreateServer()
-        const server = new RapideServer()
+        const config = await preCreateServer()
+        const server = new RapideServer(config)
         server.listen(3000)
         console.log(cyan(`\n  rapide ${version}`) + ' dev server running at:\n')
         console.log('  > Local: ' + lightBlue('http://localhost:3000\n'))

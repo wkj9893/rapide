@@ -1,22 +1,18 @@
 {
-  "name": "@rapide/plugin-react-refresh",
+  "name": "plugin-react-refresh",
   "version": "0.0.1",
+  "description": "react-refresh plugin for rapide",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild index.ts --platform=node --outfile=index.js"
+  },
   "author": "wkj",
   "license": "MIT",
-  "main": "index.js",
-  "files": [
-    "index.js"
-  ],
-  "scripts": {
-    "build": "esbuild index.ts --bundle --minify --platform=node --outfile=index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/wkj9893/rapide.git",
-    "directory": "packages/plugin-react-refresh"
+  "dependencies": {
+    "react-refresh": "^0.10.0"
   },
   "devDependencies": {
-    "@types/node": "^16.4.1",
+    "@types/node": "^16.4.2",
     "esbuild": "^0.12.15"
   }
 }

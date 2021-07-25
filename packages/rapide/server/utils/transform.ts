@@ -1,4 +1,4 @@
-import { transform as trans } from 'esbuild'
+import { transform } from 'esbuild'
 
 export type Loader =
     | 'js'
@@ -14,8 +14,8 @@ export type Loader =
     | 'binary'
     | 'default'
 
-export default async function transform(code: string, loader: Loader) {
-    return await trans(code, {
+export async function esbuildTransform(code: string, loader: Loader) {
+    return await transform(code, {
         format: 'esm',
         loader,
         sourcemap: true,
