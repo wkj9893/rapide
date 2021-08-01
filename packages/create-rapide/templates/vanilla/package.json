@@ -1,9 +1,0 @@
-{
-  "name": "rapide-project",
-  "scripts": {
-    "dev": "rapide"
-  },
-  "devDependencies": {
-    "rapide": "latest"
-  }
-}
