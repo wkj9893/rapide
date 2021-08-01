@@ -52,6 +52,20 @@ async function handleMessage(data: HMRMessage) {
     } else if (data.type === 'reload') {
         window.location.reload()
     } else if (data.type === 'update') {
-
+        const module = await import(data.update)
+        console.log(import.meta)
     }
+}
+
+export function createHotContext(url: string) {
+    const { pathname } = new URL(url)
+
+    const hot = {
+        pathname,
+        accept(callback: Function) {
+            callback()
+        }
+    }
+
+    return hot
 }

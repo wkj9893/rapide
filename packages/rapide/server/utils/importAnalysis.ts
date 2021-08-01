@@ -1,6 +1,4 @@
 import { resolvePath } from './path'
-import fs from 'fs'
-import { cachePath } from '../index'
 import path from 'path'
 import { init, parse } from 'es-module-lexer'
 

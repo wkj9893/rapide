@@ -1,48 +1,64 @@
 import http from 'http'
 import path from 'path'
-import {
-    readFileBuffer,
-    readFileString,
-    writeFileString,
-} from './utils/file'
+import { readFileBuffer, readFileString, writeFileString } from './utils/file'
 import fs from 'fs'
 import importAnalysis from './utils/importAnalysis'
 import { esbuildTransform } from './utils/transform'
-import { RapideConfig, cachePath, rootPath, MEDIA_TYPES, updateMap, loaderMap } from '.'
+import {
+    RapideConfig,
+    cachePath,
+    rootPath,
+    MEDIA_TYPES,
+    updateMap,
+    loaderMap,
+} from '.'
 
-export function createHttpServer(config?: RapideConfig) {
+export async function transform(
+    code: string,
+    codePath: string,
+    config: RapideConfig
+): Promise<string> {
+    const ext = path.extname(codePath)
+    if (ext === '.html') {
+        code += '<script type="module" src="node_modules/rapide/client.js"></script>'
+    }
 
-    async function transform(code: string, ext: string, codePath: string): Promise<string> {
-        let res = code
-        if (ext === '.html') {
-            res = res + '<script type="module" src="node_modules/rapide/client.js"></script>'
-        } else {
-            const loader = loaderMap[ext] ?? 'default'
-            // console.log("extension", ext)
-            // console.log("res", res)
-            res = (await esbuildTransform(res, loader)).code
-            console.log('wkj', res)
-            if (
-                ext === '.ts' ||
-                ext === '.js' ||
-                ext === '.tsx' ||
-                ext === '.jsx'
-            ) {
-                res = await importAnalysis(res, codePath)
-            }
-        }
+    if (loaderMap[ext]) {
+        code = (await esbuildTransform(code, loaderMap[ext])).code
+    }
 
-        if (config) {
-            for (const plugin of config.plugins) {
-                res = (await import(plugin)).transform(res, ext)
-            }
-        }
-        return res
+    for (const plugin of config.plugins) {
+        code = await plugin.transform(code, codePath)
     }
 
 
+
+    if (ext === '.ts' || ext === '.js' || ext === '.tsx' || ext === '.jsx') {
+        code = await importAnalysis(code, codePath)
+        if (ext === '.jsx' || ext === '.tsx') {
+            code = `import {createHotContext} from '/node_modules/rapide/client.js';
+            import.meta.hot = createHotContext(import.meta.url);` + code
+        }
+    }
+    return code
+}
+
+export function createHttpServer(config: RapideConfig) {
     const server = http.createServer(async (req, res) => {
         let { url } = req
+        if (url?.startsWith('/App.tsx')) {
+            let code = await readFileString(path.resolve(rootPath, 'App.tsx'))
+            code = await transform(
+                code,
+                path.resolve(rootPath, 'App.tsx'),
+                config
+            )
+            res.writeHead(200, {
+                'Content-Type': 'application/javascript',
+            })
+            return res.end(code)
+        }
+
         if (!url) {
             res.writeHead(404)
             res.write(404)
@@ -63,9 +79,10 @@ export function createHttpServer(config?: RapideConfig) {
             res.writeHead(200, {
                 'Content-Type': 'application/javascript',
             })
-            return res.end(await readFileBuffer(path.resolve(__dirname, 'client.js')))
-        }
-        else {
+            return res.end(
+                await readFileBuffer(path.resolve(__dirname, 'client.js'))
+            )
+        } else {
             subPath = url.slice(1)
         }
         const codePath = path.resolve(rootPath, subPath)
@@ -74,20 +91,18 @@ export function createHttpServer(config?: RapideConfig) {
 
         if (fs.existsSync(cacheFilePath) && !updateMap.get(codePath)) {
             res.writeHead(200, {
-                'Content-Type':
-                    MEDIA_TYPES[ext] ?? 'text/plain',
+                'Content-Type': MEDIA_TYPES[ext] ?? 'text/plain',
             })
             return res.end(await readFileBuffer(cacheFilePath))
         }
 
         try {
             let code = await readFileString(codePath)
-            code = await transform(code, ext, codePath)
+            code = await transform(code, codePath, config)
             await writeFileString(cacheFilePath, code)
             updateMap.set(cacheFilePath, false)
             res.writeHead(200, {
-                'Content-Type':
-                    MEDIA_TYPES[ext] ?? 'text/plain',
+                'Content-Type': MEDIA_TYPES[ext] ?? 'text/plain',
             })
             return res.end(code)
         } catch (error) {

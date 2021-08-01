@@ -1,6 +1,6 @@
 import { Loader } from './utils/transform'
 import { resolveRoot } from './utils/path'
-import { createHttpServer } from './server'
+import { createHttpServer, transform } from './server'
 import path from 'path'
 import { createWatcher } from './watcher'
 import { Server } from 'http'
@@ -9,12 +9,17 @@ import { createWebsocketServer } from './wss'
 import { FSWatcher } from 'chokidar'
 import { HMRMessage } from '../client/index'
 import { preCreateServer } from './preCreateServer'
-import { normalize } from './utils/path'
-
 
 export interface RapideConfig {
-    plugins: string[]
+    plugins: RapidePlugin[]
 }
+
+export interface RapidePlugin {
+    name: string
+    transform: ((code: string, codePath: string) => string) | ((code: string, codePath: string) => Promise<string>)
+}
+
+
 
 const MEDIA_TYPES: Record<string, string> = {
     '.md': 'text/markdown',
@@ -54,15 +59,18 @@ class RapideServer {
     wss: WebSocketServer
     watcher: FSWatcher
     updateMap: Map<string, boolean>
-    config?: RapideConfig
 
-    constructor(config?: RapideConfig) {
-        this.config = config
-        this.httpServer = createHttpServer()
+    constructor(config: RapideConfig) {
+        this.httpServer = createHttpServer(config)
         this.wss = createWebsocketServer(this.httpServer)
         this.watcher = createWatcher(rootPath)
         this.updateMap = new Map()
         this.watcher.on('change', filePath => {
+            if (filePath.includes('App.tsx')) {
+                const currentTime = new Date().getTime()
+                this.send({ type: 'update', update: `/App.tsx/${currentTime}` })
+                return
+            }
             updateMap.set(filePath, true)
             // updateMap.set(filePath, false)
             this.send({ type: 'reload' })

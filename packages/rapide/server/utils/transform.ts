@@ -19,10 +19,5 @@ export async function esbuildTransform(code: string, loader: Loader) {
         format: 'esm',
         loader,
         sourcemap: true,
-        tsconfigRaw: `{
-            "compilerOptions": {
-                "target": "esnext",
-              }
-        }`,
     })
 }

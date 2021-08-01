@@ -1,15 +1,17 @@
 import path from 'path'
 import { writeFileString } from './utils/file'
 import fs from 'fs'
-import buildFiles from './utils/build'
+import { buildFiles } from './utils/build'
 import getExports from './utils/exports'
 import { cachePath, rootPath, RapideConfig } from '.'
 
-export async function preCreateServer(): Promise<RapideConfig | undefined> {
+export async function preCreateServer(): Promise<RapideConfig> {
+    let config: RapideConfig = { plugins: [] }
     fs.rmSync(cachePath, { recursive: true, force: true })
     fs.mkdirSync(cachePath, { recursive: true })
     const packageJsonPath = path.resolve(rootPath, 'package.json')
     if (fs.existsSync(packageJsonPath)) {
+        config = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).rapide
         const dependencies =
             JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).dependencies ??
             {}
@@ -46,10 +48,11 @@ export async function preCreateServer(): Promise<RapideConfig | undefined> {
         )
         await Promise.all(promises)
     }
-    const configPath = path.resolve(rootPath, 'rapide.config.json')
-    if (fs.existsSync(configPath)) {
-        return JSON.parse(fs.readFileSync(configPath, 'utf-8'))
+    for (const [index, plugin] of config.plugins.entries()) {
+        // @ts-ignore
+        config.plugins[index] = require(plugin).default()
     }
+    return config
 }
 
 async function writeModFile(dependency: string, filePath: string) {

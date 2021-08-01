@@ -2,6 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "outDir": "../dist/client",
-    "lib": ["ESNext", "DOM"]
+    "lib": ["ESNext", "DOM"],
+    "module":"ESNext"
   }
 }
