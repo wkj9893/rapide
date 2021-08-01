@@ -20,7 +20,8 @@ export async function transform(
 ): Promise<string> {
     const ext = path.extname(codePath)
     if (ext === '.html') {
-        code += '<script type="module" src="node_modules/rapide/client.js"></script>'
+        code +=
+            '<script type="module" src="node_modules/rapide/client.js"></script>'
     }
 
     if (loaderMap[ext]) {
@@ -31,12 +32,11 @@ export async function transform(
         code = await plugin.transform(code, codePath)
     }
 
-
-
     if (ext === '.ts' || ext === '.js' || ext === '.tsx' || ext === '.jsx') {
         code = await importAnalysis(code, codePath)
         if (ext === '.jsx' || ext === '.tsx') {
-            code = `import {createHotContext} from '/node_modules/rapide/client.js';
+            code =
+                `import {createHotContext} from '/node_modules/rapide/client.js';
             import.meta.hot = createHotContext(import.meta.url);` + code
         }
     }

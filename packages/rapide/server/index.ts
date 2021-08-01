@@ -7,19 +7,33 @@ import { Server } from 'http'
 import WebSocket, { Server as WebSocketServer } from 'ws'
 import { createWebsocketServer } from './wss'
 import { FSWatcher } from 'chokidar'
-import { HMRMessage } from '../client/index'
 import { preCreateServer } from './preCreateServer'
 
-export interface RapideConfig {
+type HMRMessage = ConnectedMessage | ReloadMessage | UpdateMessage
+
+interface ConnectedMessage {
+    type: 'connected'
+}
+
+interface ReloadMessage {
+    type: 'reload'
+}
+
+interface UpdateMessage {
+    type: 'update'
+    update: string
+}
+
+interface RapideConfig {
     plugins: RapidePlugin[]
 }
 
-export interface RapidePlugin {
+interface RapidePlugin {
     name: string
-    transform: ((code: string, codePath: string) => string) | ((code: string, codePath: string) => Promise<string>)
+    transform:
+        | ((code: string, codePath: string) => string)
+        | ((code: string, codePath: string) => Promise<string>)
 }
-
-
 
 const MEDIA_TYPES: Record<string, string> = {
     '.md': 'text/markdown',
@@ -103,3 +117,5 @@ export {
     preCreateServer,
     RapideServer,
 }
+
+export type { RapideConfig, RapidePlugin, HMRMessage }

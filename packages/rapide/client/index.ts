@@ -1,17 +1,4 @@
-export type HMRMessage = ConnectedMessage | ReloadMessage | UpdateMessage
-
-interface ConnectedMessage {
-    type: 'connected'
-}
-
-interface ReloadMessage {
-    type: 'reload'
-}
-
-interface UpdateMessage {
-    type: 'update'
-    update: string
-}
+import { HMRMessage } from '../server/index'
 
 const socket = new WebSocket(`ws://${location.host}`)
 
@@ -64,7 +51,7 @@ export function createHotContext(url: string) {
         pathname,
         accept(callback: Function) {
             callback()
-        }
+        },
     }
 
     return hot

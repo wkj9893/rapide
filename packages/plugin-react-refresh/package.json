@@ -1,5 +1,5 @@
 {
-  "name": "@rapide/react-refresh",
+  "name": "rapide-react-refresh",
   "version": "0.0.1",
   "description": "react-refresh plugin for rapide",
   "main": "index.js",

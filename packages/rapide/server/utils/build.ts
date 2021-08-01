@@ -1,10 +1,7 @@
 import { build } from 'esbuild'
 import preBundlePlugin from '../plugins/preBundle'
 
-export async function buildFiles(
-    entryPoints: string[],
-    outdir: string
-) {
+export async function buildFiles(entryPoints: string[], outdir: string) {
     try {
         await build({
             entryPoints,

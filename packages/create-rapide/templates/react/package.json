@@ -1,6 +1,5 @@
 {
   "name": "rapide-project",
-  "version": "0.0.0",
   "scripts": {
     "dev": "rapide"
   },
@@ -9,6 +8,12 @@
     "react-dom": "latest"
   },
   "devDependencies": {
-    "rapide": "latest"
+    "rapide": "latest",
+    "rapide-react-refresh": "latest"
+  },
+  "rapide": {
+    "plugins": [
+      "rapide-react-refresh"
+    ]
   }
 }
