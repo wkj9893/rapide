@@ -1,18 +1,21 @@
 {
-  "name": "plugin-react-refresh",
+  "name": "@rapide/react-refresh",
   "version": "0.0.1",
   "description": "react-refresh plugin for rapide",
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "scripts": {
-    "build": "esbuild index.ts --platform=node --outfile=index.js"
+    "build": "esbuild index.ts --platform=node --format=cjs --minify --outfile=index.js"
   },
   "author": "wkj",
   "license": "MIT",
   "dependencies": {
+    "@babel/core": "^7.14.8",
     "react-refresh": "^0.10.0"
   },
   "devDependencies": {
-    "@types/node": "^16.4.2",
-    "esbuild": "^0.12.15"
+    "esbuild": "^0.12.16"
   }
 }
