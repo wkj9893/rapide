@@ -1,6 +1,6 @@
 {
   "name": "rapide-react-refresh",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "react-refresh plugin for rapide",
   "main": "index.js",
   "files": [
