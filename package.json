@@ -12,9 +12,10 @@
     "prettier": "^2.3.2"
   },
   "prettier": {
-    "tabWidth": 4,
+    "tabWidth": 2,
+    "printWidth":80,
     "semi": false,
     "singleQuote": true,
-    "arrowParens": "avoid"
+    "trailingComma": "none"
   }
 }

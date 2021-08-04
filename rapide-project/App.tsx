@@ -1,5 +1,6 @@
-import React from 'react'
+import React from 'react' 
 import { useState } from 'react'
+import './index.css'
 
 export default function App() {
     const [count, setCount] = useState(0)
@@ -11,9 +12,9 @@ export default function App() {
         <>
             <h1>{time}</h1>
             <button onClick={() => setCount(prev => prev + 1)}>
-                Please Click Me
+                Please Click 
             </button>
-            <h1>{count}</h1>
+            <h1 className="count">{count}</h1>
         </>
     )
 }
