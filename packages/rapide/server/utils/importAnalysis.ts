@@ -1,8 +1,13 @@
 import { resolvePath } from './path'
 import path from 'path'
 import { init, parse } from 'es-module-lexer'
+import { RapideConfig } from '..'
 
-export default async function importAnalysis(code: string, codePath: string) {
+export default async function importAnalysis(
+  code: string,
+  codePath: string,
+  ESModuleMap: Map<string, string>
+) {
   await init
   const imports = parse(code)[0].filter((value) => value.n)
 
@@ -23,7 +28,11 @@ export default async function importAnalysis(code: string, codePath: string) {
       }
       //  handle bare import specifiers, such as import moment from "moment"
       else {
-        res += `/node_modules/${str}/mod.js`
+        if (ESModuleMap.has(str)) {
+          res += ESModuleMap.get(str)
+        } else {
+          res += `/node_modules/${str}/mod.js`
+        }
         i += str.length
         j++
       }

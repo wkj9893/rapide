@@ -1,7 +1,8 @@
 import http from 'http'
 import path from 'path'
 import fs from 'fs'
-import { readFileBuffer, readFileString, writeFileString } from './utils/file'
+import { readFile } from 'fs/promises'
+import { writeFileString } from './utils/file'
 import importAnalysis from './utils/importAnalysis'
 import { esbuildTransform } from './utils/transform'
 import {
@@ -41,7 +42,7 @@ updateStyle(id,css);`
   }
 
   if (ext === '.ts' || ext === '.js' || ext === '.tsx' || ext === '.jsx') {
-    code = await importAnalysis(code, codePath)
+    code = await importAnalysis(code, codePath, config.ESModuleMap)
     if (ext === '.jsx' || ext === '.tsx') {
       code =
         `import {createHotContext} from '/node_modules/rapide/client.js';
@@ -66,7 +67,7 @@ export function createHttpServer(config: RapideConfig) {
     temp.pop()
     if (urls.has(temp.join('/'))) {
       const codePath = path.resolve(rootPath, temp.join('/').slice(1))
-      let code = await readFileString(codePath)
+      let code = await readFile(codePath, 'utf-8')
       code = await transform(code, codePath, config)
       res.writeHead(200, {
         'Content-Type': MEDIA_TYPES[path.extname(codePath)] ?? 'text/plain'
@@ -89,7 +90,7 @@ export function createHttpServer(config: RapideConfig) {
       res.writeHead(200, {
         'Content-Type': 'application/javascript'
       })
-      return res.end(await readFileBuffer(path.resolve(__dirname, 'client.js')))
+      return res.end(await readFile(path.resolve(__dirname, 'client.js')))
     } else {
       subPath = url.slice(1)
     }
@@ -101,11 +102,11 @@ export function createHttpServer(config: RapideConfig) {
       res.writeHead(200, {
         'Content-Type': MEDIA_TYPES[ext] ?? 'text/plain'
       })
-      return res.end(await readFileBuffer(cacheFilePath))
+      return res.end(await readFile(cacheFilePath))
     }
 
     try {
-      let code = await readFileString(codePath)
+      let code = await readFile(codePath, 'utf-8')
       code = await transform(code, codePath, config)
       await writeFileString(cacheFilePath, code)
       updateMap.set(cacheFilePath, false)

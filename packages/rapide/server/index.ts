@@ -26,6 +26,7 @@ interface UpdateMessage {
 
 interface RapideConfig {
   plugins: RapidePlugin[]
+  ESModuleMap: Map<string, string>
 }
 
 interface RapidePlugin {

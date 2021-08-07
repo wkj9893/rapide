@@ -1,80 +1,69 @@
 import path from 'path'
 import { writeFileString } from './utils/file'
 import fs from 'fs'
+import { copyFile } from 'fs/promises'
 import { buildFiles } from './utils/build'
 import getExports from './utils/exports'
 import { cachePath, rootPath, RapideConfig } from '.'
 
 export async function preCreateServer(): Promise<RapideConfig> {
-  let config: RapideConfig = { plugins: [] }
-  // fs.rmSync(cachePath, { recursive: true, force: true })
-  fs.mkdirSync(cachePath, { recursive: true })
+  const config: RapideConfig = { plugins: [], ESModuleMap: new Map() }
+  if (fs.existsSync(cachePath)) {
+    deleteFiles()
+  } else {
+    fs.mkdirSync(cachePath, { recursive: true })
+  }
   const packageJsonPath = path.resolve(rootPath, 'package.json')
   if (fs.existsSync(packageJsonPath)) {
     handleConfig()
     const deps =
       JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).dependencies ?? {}
     const cachePackageJsonPath = path.resolve(cachePath, 'package.json')
-    if (fs.existsSync(cachePackageJsonPath)) {
-      const cacheDeps =
-        JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).dependencies ?? {}
-      const entryPoints = []
-      const promises: Promise<void>[] = []
-      const cacheKey = Object.keys(deps)
-      for (const dep of Object.keys(deps)) {
-        //  skip already cached dependency
-        if (cacheKey.includes(dep) && cacheDeps[dep] === deps[dep]) {
-          continue
-        }
-        const main =
-          JSON.parse(
-            fs.readFileSync(
-              path.resolve(rootPath, `node_modules/${dep}/package.json`),
-              'utf8'
-            )
-          ).main ?? 'index.js'
-        const filePath = path.resolve(rootPath, 'node_modules', dep, main)
-        if (fs.existsSync(filePath)) {
-          entryPoints.push(filePath)
-        }
-        promises.push(writeModFile(dep, filePath))
-      }
-      promises.push(
-        buildFiles(entryPoints, path.resolve(cachePath, 'node_modules'))
-      )
-      await Promise.all(promises)
-      return config
+    if (!fs.existsSync(cachePackageJsonPath)) {
+      fs.writeFileSync(cachePackageJsonPath, '{}')
     }
-
-    fs.copyFileSync(packageJsonPath, cachePackageJsonPath)
+    const cacheDeps =
+      JSON.parse(fs.readFileSync(cachePackageJsonPath, 'utf8')).dependencies ??
+      {}
+    const cacheKey = Object.keys(cacheDeps)
     const entryPoints = []
     const promises: Promise<void>[] = []
-    for (const dependency of Object.keys(deps)) {
-      const main =
-        JSON.parse(
-          fs.readFileSync(
-            path.resolve(rootPath, `node_modules/${dependency}/package.json`),
-            'utf8'
-          )
-        ).main ?? 'index.js'
-      const filePath = path.resolve(rootPath, 'node_modules', dependency, main)
-      if (fs.existsSync(filePath)) {
+    for (const dep of Object.keys(deps)) {
+      const shouldSkip = cacheKey.includes(dep) && cacheDeps[dep] === deps[dep]
+      const packageJson = JSON.parse(
+        fs.readFileSync(
+          path.resolve(rootPath, `node_modules/${dep}/package.json`),
+          'utf8'
+        )
+      )
+      const main = packageJson.module ?? packageJson.main ?? 'index.js'
+      const filePath = path.resolve(rootPath, 'node_modules', dep, main)
+      if (!shouldSkip && fs.existsSync(filePath)) {
         entryPoints.push(filePath)
       }
-      promises.push(writeModFile(dependency, filePath))
+      if (packageJson.module) {
+        config.ESModuleMap.set(dep, path.join('/node_modules', dep, main))
+      } else {
+        //  skip already cached dependency
+        if (!shouldSkip) {
+          promises.push(writeModFile(dep, filePath))
+        }
+      }
     }
     promises.push(
       buildFiles(entryPoints, path.resolve(cachePath, 'node_modules'))
     )
+    promises.push(copyFile(packageJsonPath, cachePackageJsonPath))
     await Promise.all(promises)
   }
   return config
 
   function handleConfig() {
-    config = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).rapide
-    for (const [index, plugin] of config.plugins.entries()) {
-      // @ts-ignore
-      config.plugins[index] = require(plugin).default()
+    const rapideConfig = JSON.parse(
+      fs.readFileSync(packageJsonPath, 'utf8')
+    ).rapide
+    for (const plugin of rapideConfig.plugins) {
+      config.plugins.push(require(plugin).default())
     }
   }
 }
@@ -87,4 +76,15 @@ async function writeModFile(dependency: string, filePath: string) {
       ', '
     )} } = _default`
   )
+}
+
+//  delete all cache files excludes node_modules
+function deleteFiles() {
+  const files = fs.readdirSync(cachePath)
+  for (const file of files) {
+    if (file === 'node_modules' || file === 'package.json') {
+      continue
+    }
+    fs.rmSync(path.resolve(cachePath, file), { recursive: true, force: true })
+  }
 }

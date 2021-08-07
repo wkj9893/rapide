@@ -9,7 +9,6 @@ async function main() {
   if (!args[0] || args[0] === 'dev') {
     const startTime = performance.now()
     const config = await preCreateServer()
-    console.log(performance.now() - startTime)
     const server = new RapideServer(config)
     server.listen(3000)
     console.log(cyan(`\n  rapide ${version}`) + ' dev server running at:\n')
