@@ -21,21 +21,17 @@ importers:
 
   packages/rapide:
     specifiers:
-      '@babel/core': ^7.14.8
       '@types/babel__core': ^7.1.15
       '@types/node': ^16.3.3
       '@types/ws': ^7.4.6
       chokidar: ^3.5.2
       cjs-module-lexer: ^1.2.2
       es-module-lexer: ^0.7.1
-      esbuild: ^0.12.15
-      react-refresh: ^0.10.0
+      esbuild: ^0.12.16
       typescript: ^4.3.5
       ws: ^7.5.1
     dependencies:
-      '@babel/core': 7.15.0
       esbuild: 0.12.18
-      react-refresh: 0.10.0
     devDependencies:
       '@types/babel__core': 7.1.15
       '@types/node': 16.4.12

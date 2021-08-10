@@ -63,23 +63,26 @@ const loaderMap: Record<string, Loader> = {
   '.json': 'json'
 }
 
-const updateMap: Map<string, boolean> = new Map()
+interface CacheFile {
+  content: string
+  needUpdate: boolean
+}
+
+const cacheSet: Set<string> = new Set()
 
 const cachePath = path.resolve(__dirname, 'cache')
 
 const rootPath = resolveRoot()
 
 class RapideServer {
-  httpServer: Server
+  server: Server
   wss: WebSocketServer
   watcher: FSWatcher
-  updateMap: Map<string, boolean>
 
   constructor(config: RapideConfig) {
-    this.httpServer = createHttpServer(config)
-    this.wss = createWebsocketServer(this.httpServer)
+    this.server = createHttpServer(config)
+    this.wss = createWebsocketServer(this.server)
     this.watcher = createWatcher(rootPath)
-    this.updateMap = new Map()
     this.watcher.on('change', (filePath) => {
       const ext = path.extname(filePath)
       if (ext === '.jsx' || ext === '.tsx' || ext === '.css') {
@@ -90,17 +93,17 @@ class RapideServer {
         })
         return
       }
-      updateMap.set(filePath, true)
+      cacheSet.delete(filePath)
       this.send({ type: 'reload' })
     })
   }
 
   listen(port: number) {
-    this.httpServer.listen(port)
+    this.server.listen(port)
   }
 
   close() {
-    this.httpServer.close()
+    this.server.close()
   }
 
   send(data: HMRMessage, wss = this.wss) {
@@ -114,7 +117,7 @@ class RapideServer {
 
 export {
   createHttpServer as createServer,
-  updateMap,
+  cacheSet,
   cachePath,
   rootPath,
   loaderMap,

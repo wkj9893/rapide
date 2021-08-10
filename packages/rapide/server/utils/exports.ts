@@ -18,7 +18,6 @@ export default async function getExports(modulePath: string) {
       }
     }
   } catch (e) {
-    // console.log('sss')
     console.error(e)
     return []
   }

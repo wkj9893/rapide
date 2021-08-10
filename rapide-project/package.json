@@ -1,8 +1,7 @@
 {
   "name": "rapide-project",
   "scripts": {
-    "dev": "rapide",
-    "vite-dev": "vite"
+    "dev": "rapide"
   },
   "dependencies": {
     "@material-ui/core": "^4.12.3",

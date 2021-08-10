@@ -2,16 +2,15 @@ import http from 'http'
 import path from 'path'
 import fs from 'fs'
 import { readFile } from 'fs/promises'
-import { writeFileString } from './utils/file'
 import importAnalysis from './utils/importAnalysis'
 import { esbuildTransform } from './utils/transform'
 import {
   RapideConfig,
-  cachePath,
   rootPath,
   MEDIA_TYPES,
-  updateMap,
-  loaderMap
+  cacheSet,
+  loaderMap,
+  cachePath
 } from '.'
 
 export async function transform(
@@ -57,10 +56,7 @@ export function createHttpServer(config: RapideConfig) {
   const server = http.createServer(async (req, res) => {
     let { url } = req
     if (!url) {
-      res.writeHead(404)
-      res.write(404)
-      res.end()
-      return
+      return res.writeHead(404).end()
     }
     // handle /index.css/1628048939939
     const temp = url.split('/')
@@ -69,10 +65,13 @@ export function createHttpServer(config: RapideConfig) {
       const codePath = path.resolve(rootPath, temp.join('/').slice(1))
       let code = await readFile(codePath, 'utf-8')
       code = await transform(code, codePath, config)
-      res.writeHead(200, {
-        'Content-Type': MEDIA_TYPES[path.extname(codePath)] ?? 'text/plain'
-      })
-      return res.end(code)
+      return res
+        .writeHead(200, {
+          'Content-Type': MEDIA_TYPES[path.extname(codePath)] ?? 'text/plain',
+          'Cache-Control': 'no-cache',
+          etag: new Date().getTime()
+        })
+        .end(code)
     }
 
     urls.add(url)
@@ -84,40 +83,48 @@ export function createHttpServer(config: RapideConfig) {
     //  for path without extension resolve to html
     else if (!path.extname(url)) {
       subPath === path.resolve(url.slice(1), '.html')
-    }
-    //  client side code
-    else if (url === '/node_modules/rapide/client.js') {
-      res.writeHead(200, {
-        'Content-Type': 'application/javascript'
-      })
-      return res.end(await readFile(path.resolve(__dirname, 'client.js')))
     } else {
       subPath = url.slice(1)
     }
     const ext = path.extname(subPath)
     const codePath = path.resolve(rootPath, subPath)
-    const cacheFilePath = path.resolve(cachePath, subPath)
+    const cacheFilePath =
+      url === '/node_modules/rapide/client.js'
+        ? path.resolve(__dirname, 'client.js')
+        : path.resolve(cachePath, subPath)
 
-    if (fs.existsSync(cacheFilePath) && !updateMap.get(codePath)) {
-      res.writeHead(200, {
-        'Content-Type': MEDIA_TYPES[ext] ?? 'text/plain'
-      })
-      return res.end(await readFile(cacheFilePath))
+    if (cacheSet.has(codePath)) {
+      return res.writeHead(304).end()
+    }
+
+    //  node_modules cache files or client code
+    if (fs.existsSync(cacheFilePath)) {
+      const content = await readFile(cacheFilePath, 'utf-8')
+      cacheSet.add(codePath)
+      return res
+        .writeHead(200, {
+          'Content-Type': MEDIA_TYPES[ext] ?? 'text/plain',
+          'Cache-Control': 'no-cache',
+          etag: new Date().getTime()
+        })
+        .end(content)
     }
 
     try {
       let code = await readFile(codePath, 'utf-8')
       code = await transform(code, codePath, config)
-      await writeFileString(cacheFilePath, code)
-      updateMap.set(cacheFilePath, false)
-      res.writeHead(200, {
-        'Content-Type': MEDIA_TYPES[ext] ?? 'text/plain'
-      })
-      return res.end(code)
+      cacheSet.add(codePath)
+      return res
+        .writeHead(200, {
+          'Content-Type': MEDIA_TYPES[ext] ?? 'text/plain',
+          'Cache-Control': 'no-cache',
+          etag: new Date().getTime()
+        })
+        .end(code)
     } catch (error) {
-      res.writeHead(404)
-      return res.end(error.message)
+      return res.writeHead(404).end(error.message)
     }
   })
+  server.on('error', (e) => console.error(e))
   return server
 }
