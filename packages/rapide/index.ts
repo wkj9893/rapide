@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { preCreateServer, RapideServer } from './server/index'
+import { createServer, preCreateServer } from './server/index'
 import { version } from './package.json'
 import { cyan, lightBlue } from './server/utils/color'
 
@@ -9,10 +9,9 @@ async function main() {
   if (!args[0] || args[0] === 'dev') {
     const startTime = performance.now()
     const config = await preCreateServer()
-    const server = new RapideServer(config)
-    server.listen(3000)
+    const server = await createServer(config)
     console.log(cyan(`\n  rapide ${version}`) + ' dev server running at:\n')
-    console.log('  > Local: ' + lightBlue('http://localhost:3000\n'))
+    console.log('  > Local: ' + lightBlue(`http://localhost:${server.port}\n`))
     console.log(
       cyan(`  ready in ${(performance.now() - startTime).toFixed()}ms`)
     )

@@ -1,9 +1,10 @@
-import http from 'http'
+import http, { Server } from 'http'
 import path from 'path'
 import fs from 'fs'
 import { readFile } from 'fs/promises'
 import importAnalysis from './utils/importAnalysis'
 import { esbuildTransform } from './utils/transform'
+import {lightBlue} from './utils/color'
 import {
   RapideConfig,
   rootPath,
@@ -51,7 +52,7 @@ import.meta.hot = createHotContext(import.meta.url);\n` + code
   return code
 }
 
-export function createHttpServer(config: RapideConfig) {
+export async function createHttpServer(config: RapideConfig) {
   const urls = new Set()
   const server = http.createServer(async (req, res) => {
     let { url } = req
@@ -125,6 +126,19 @@ export function createHttpServer(config: RapideConfig) {
       return res.writeHead(404).end(error.message)
     }
   })
-  server.on('error', (e) => console.error(e))
-  return server
+  let { port } = config
+  await new Promise((resolve, reject) => {
+    server.on('error', (e: Error & { code: string }) => {
+      if (e.code === 'EADDRINUSE') {
+        console.log('\nAddress '+lightBlue(`http://localhost:${port}`) + ' in use, retrying '+lightBlue(`http://localhost:${port + 1}`)+'...')
+        server.close()
+        server.listen(++port)
+      } else {
+        reject(e)
+      }
+    })
+    server.listen(port)
+    server.on('listening',resolve)
+  })
+  return { httpServer: server, port }
 }

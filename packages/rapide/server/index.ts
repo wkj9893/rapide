@@ -27,6 +27,7 @@ interface UpdateMessage {
 interface RapideConfig {
   plugins: RapidePlugin[]
   ESModuleMap: Map<string, string>
+  port: number
 }
 
 interface RapidePlugin {
@@ -63,67 +64,55 @@ const loaderMap: Record<string, Loader> = {
   '.json': 'json'
 }
 
-interface CacheFile {
-  content: string
-  needUpdate: boolean
-}
-
 const cacheSet: Set<string> = new Set()
 
 const cachePath = path.resolve(__dirname, 'cache')
 
 const rootPath = resolveRoot()
 
-class RapideServer {
-  server: Server
-  wss: WebSocketServer
+interface RapideServer {
+  httpServer: Server
+  port: number
+  wss: WebSocket.Server
   watcher: FSWatcher
+}
 
-  constructor(config: RapideConfig) {
-    this.server = createHttpServer(config)
-    this.wss = createWebsocketServer(this.server)
-    this.watcher = createWatcher(rootPath)
-    this.watcher.on('change', (filePath) => {
-      const ext = path.extname(filePath)
-      if (ext === '.jsx' || ext === '.tsx' || ext === '.css') {
-        const currentTime = new Date().getTime()
-        this.send({
-          type: 'update',
-          update: `${normalize(filePath)}/${currentTime}`
-        })
-        return
-      }
-      cacheSet.delete(filePath)
-      this.send({ type: 'reload' })
-    })
-  }
-
-  listen(port: number) {
-    this.server.listen(port)
-  }
-
-  close() {
-    this.server.close()
-  }
-
-  send(data: HMRMessage, wss = this.wss) {
+async function createServer(config: RapideConfig): Promise<RapideServer> {
+  const { httpServer, port } = await createHttpServer(config)
+  const wss = createWebsocketServer(httpServer)
+  const watcher = createWatcher(rootPath)
+  const send = (data: HMRMessage) => {
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(data))
       }
     })
   }
+
+  watcher.on('change', (filePath) => {
+    const ext = path.extname(filePath)
+    if (ext === '.jsx' || ext === '.tsx' || ext === '.css') {
+      const currentTime = new Date().getTime()
+      send({
+        type: 'update',
+        update: `${normalize(filePath)}/${currentTime}`
+      })
+      return
+    }
+    cacheSet.delete(filePath)
+    send({ type: 'reload' })
+  })
+  return { httpServer, port, wss, watcher }
 }
 
 export {
-  createHttpServer as createServer,
   cacheSet,
   cachePath,
   rootPath,
   loaderMap,
   MEDIA_TYPES,
   preCreateServer,
-  RapideServer
+  createServer
 }
 
 export type { RapideConfig, RapidePlugin, HMRMessage }
