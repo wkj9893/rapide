@@ -13,7 +13,7 @@ export function resolveRoot(): string {
       return rootDir
     }
     if (prev === rootDir) {
-      throw new Error('can not find project root path')
+      return process.cwd()
     }
     prev = rootDir
     rootDir = path.dirname(rootDir)

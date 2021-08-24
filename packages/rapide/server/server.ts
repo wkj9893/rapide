@@ -4,7 +4,7 @@ import fs from 'fs'
 import { readFile } from 'fs/promises'
 import importAnalysis from './utils/importAnalysis'
 import { esbuildTransform } from './utils/transform'
-import {lightBlue} from './utils/color'
+import { lightBlue } from './utils/color'
 import {
   RapideConfig,
   rootPath,
@@ -130,7 +130,13 @@ export async function createHttpServer(config: RapideConfig) {
   await new Promise((resolve, reject) => {
     server.on('error', (e: Error & { code: string }) => {
       if (e.code === 'EADDRINUSE') {
-        console.log('\nAddress '+lightBlue(`http://localhost:${port}`) + ' in use, retrying '+lightBlue(`http://localhost:${port + 1}`)+'...')
+        console.log(
+          '\nAddress ' +
+            lightBlue(`http://localhost:${port}`) +
+            ' in use, retrying ' +
+            lightBlue(`http://localhost:${port + 1}`) +
+            '...'
+        )
         server.close()
         server.listen(++port)
       } else {
@@ -138,7 +144,7 @@ export async function createHttpServer(config: RapideConfig) {
       }
     })
     server.listen(port)
-    server.on('listening',resolve)
+    server.on('listening', resolve)
   })
   return { httpServer: server, port }
 }

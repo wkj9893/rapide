@@ -6,8 +6,8 @@ import { buildFiles } from './utils/build'
 import getExports from './utils/exports'
 import { cachePath, rootPath, RapideConfig } from '.'
 
-export async function preCreateServer(port=3000): Promise<RapideConfig> {
-  const config: RapideConfig = { plugins: [], ESModuleMap: new Map(),port }
+export async function preCreateServer(port = 3000): Promise<RapideConfig> {
+  const config: RapideConfig = { plugins: [], ESModuleMap: new Map(), port }
   if (fs.existsSync(cachePath)) {
     deleteFiles()
   } else {
@@ -62,6 +62,9 @@ export async function preCreateServer(port=3000): Promise<RapideConfig> {
     const rapideConfig = JSON.parse(
       fs.readFileSync(packageJsonPath, 'utf8')
     ).rapide
+    if (!rapideConfig) {
+      return
+    }
     for (const plugin of rapideConfig.plugins) {
       config.plugins.push(require(plugin).default())
     }

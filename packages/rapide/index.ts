@@ -2,6 +2,7 @@
 import { createServer, preCreateServer } from './server/index'
 import { version } from './package.json'
 import { cyan, lightBlue } from './server/utils/color'
+import { build } from './server/utils/build'
 
 const args = process.argv.slice(2)
 
@@ -18,7 +19,7 @@ async function main() {
     return
   }
   if (args[0] === 'build') {
-    //  TODO build
+    await build()
     return
   }
   if (args[0] === '--version') {

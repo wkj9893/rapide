@@ -1,7 +1,6 @@
 import { resolvePath } from './path'
 import path from 'path'
 import { init, parse } from 'es-module-lexer'
-import { RapideConfig } from '..'
 
 export default async function importAnalysis(
   code: string,
