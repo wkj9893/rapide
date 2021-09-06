@@ -25,7 +25,8 @@
     "url": "https://github.com/wkj9893/rapide/issues"
   },
   "scripts": {
-    "build-types": "rm -rf types && tsc --declaration --emitDeclarationOnly --outDir types -p server",
+    "test": "node /root/afz/index.js",
+    "build-types": "rm -rf types && tsc --declaration -p server",
     "dev-client": "esbuild client/index.ts --bundle --format=esm --outfile=client.js --watch",
     "dev-server": "esbuild index.ts --bundle --platform=node --outfile=index.js --external:esbuild --watch",
     "build-client": "esbuild client/index.ts --bundle --minify --format=esm --outfile=client.js",
@@ -37,6 +38,7 @@
   },
   "devDependencies": {
     "@types/node": "^16.7.10",
+    "afz": "^0.0.1",
     "chokidar": "^3.5.2",
     "cjs-module-lexer": "^1.2.2",
     "es-module-lexer": "^0.7.1",

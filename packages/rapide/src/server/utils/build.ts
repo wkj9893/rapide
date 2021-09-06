@@ -1,6 +1,6 @@
 import esbuild from 'esbuild'
 import preBundlePlugin from '../plugins/preBundle'
-import { readFile, writeFile } from 'fs/promises'
+import { readFile } from 'fs/promises'
 import path from 'path'
 import { rootPath } from '..'
 import { transformHtml } from './html'

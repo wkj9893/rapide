@@ -1,4 +1,4 @@
-import http, { Server } from 'http'
+import http from 'http'
 import path from 'path'
 import fs from 'fs'
 import { readFile } from 'fs/promises'

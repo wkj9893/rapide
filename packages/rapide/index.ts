@@ -1,8 +1,6 @@
 #!/usr/bin/env node
-import { createServer, preCreateServer } from './server/index'
+import { createServer, preCreateServer, cyan, lightBlue, build } from './server'
 import { version } from './package.json'
-import { cyan, lightBlue } from './server/utils/color'
-import { build } from './server/utils/build'
 
 const args = process.argv.slice(2)
 

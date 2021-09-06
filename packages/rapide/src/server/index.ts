@@ -8,6 +8,8 @@ import WebSocket from 'ws'
 import { createWebsocketServer } from './wss'
 import { FSWatcher } from 'chokidar'
 import { preCreateServer } from './preCreateServer'
+import { cyan, lightBlue } from './utils/color'
+import { build } from './utils/build'
 
 type HMRMessage = ConnectedMessage | ReloadMessage | UpdateMessage
 
@@ -112,7 +114,10 @@ export {
   loaderMap,
   MEDIA_TYPES,
   preCreateServer,
-  createServer
+  createServer,
+  cyan,
+  lightBlue,
+  build
 }
 
 export type { RapideConfig, RapidePlugin, HMRMessage }

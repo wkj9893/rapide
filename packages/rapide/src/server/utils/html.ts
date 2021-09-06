@@ -1,6 +1,5 @@
 import path from 'path'
 import fs from 'fs'
-import { writeBuildFile } from './file'
 import { rootPath } from '..'
 
 interface ImportSpecifier {
@@ -8,7 +7,7 @@ interface ImportSpecifier {
   str: string
 }
 
-function scanHtml(html: string): ImportSpecifier[] {
+export function scanHtml(html: string): ImportSpecifier[] {
   const res: ImportSpecifier[] = []
   let i = 0
   let tagClose = false
