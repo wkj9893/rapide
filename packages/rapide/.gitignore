@@ -1,5 +1,9 @@
-cache/
-index.js
-client.js
-types/
-test.js
+# Dependency directories
+node_modules/
+
+# Output of 'npm pack'
+*.tgz
+
+# generated files
+*.js
+*.d.ts

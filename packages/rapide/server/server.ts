@@ -122,8 +122,10 @@ export async function createHttpServer(config: RapideConfig) {
           etag: new Date().getTime()
         })
         .end(code)
-    } catch (error) {
-      return res.writeHead(404).end(error.message)
+    } catch (err) {
+      if (err instanceof Error) {
+        return res.writeHead(404).end(err.message)
+      }
     }
   })
   let { port } = config
