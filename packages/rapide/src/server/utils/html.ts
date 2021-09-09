@@ -1,5 +1,5 @@
-import path from 'path'
-import fs from 'fs'
+import path = require('path')
+import fs = require('fs')
 import { rootPath } from '..'
 
 interface ImportSpecifier {

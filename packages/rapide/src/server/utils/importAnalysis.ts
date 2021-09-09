@@ -1,5 +1,5 @@
 import { resolvePath } from './path'
-import path from 'path'
+import path = require('path')
 import { init, parse } from 'es-module-lexer'
 
 export default async function importAnalysis(

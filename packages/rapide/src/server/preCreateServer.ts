@@ -1,6 +1,6 @@
-import path from 'path'
+import path = require('path')
 import { writeFileString } from './utils/file'
-import fs from 'fs'
+import fs = require('fs')
 import { copyFile } from 'fs/promises'
 import { buildFiles } from './utils/build'
 import getExports from './utils/exports'

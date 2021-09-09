@@ -1,10 +1,10 @@
 import { Loader } from './utils/transform'
 import { resolveRoot, normalize } from './utils/path'
 import { createHttpServer } from './server'
-import path from 'path'
+import path = require('path')
 import { createWatcher } from './watcher'
 import { Server } from 'http'
-import WebSocket from 'ws'
+import WebSocket = require('ws')
 import { createWebsocketServer } from './wss'
 import { FSWatcher } from 'chokidar'
 import { preCreateServer } from './preCreateServer'
@@ -84,6 +84,7 @@ async function createServer(config: RapideConfig): Promise<RapideServer> {
   const wss = createWebsocketServer(httpServer)
   const watcher = createWatcher(rootPath)
   const send = (data: HMRMessage) => {
+    // @ts-ignore
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(data))
@@ -91,7 +92,7 @@ async function createServer(config: RapideConfig): Promise<RapideServer> {
     })
   }
 
-  watcher.on('change', (filePath) => {
+  watcher.on('change', (filePath: string) => {
     const ext = path.extname(filePath)
     if (ext === '.jsx' || ext === '.tsx' || ext === '.css') {
       const currentTime = new Date().getTime()

@@ -1,6 +1,6 @@
-import http from 'http'
-import path from 'path'
-import fs from 'fs'
+import http = require('http')
+import path = require('path')
+import fs = require('fs')
 import { readFile } from 'fs/promises'
 import importAnalysis from './utils/importAnalysis'
 import { esbuildTransform } from './utils/transform'

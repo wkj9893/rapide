@@ -5,5 +5,5 @@ node_modules/
 *.tgz
 
 # generated files
-*.js
-*.d.ts
+cli.js
+index.js

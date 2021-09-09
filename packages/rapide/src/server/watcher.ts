@@ -1,4 +1,4 @@
-import chokidar from 'chokidar'
+import chokidar = require('chokidar')
 
 export function createWatcher(dirPath: string) {
   return chokidar.watch(dirPath, {
