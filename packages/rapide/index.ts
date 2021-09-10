@@ -1,3 +1,3 @@
-import { RapideConfig, RapidePlugin } from './src/server'
+import { createServer } from './src/server'
 
-export type { RapideConfig, RapidePlugin }
+export { createServer }

@@ -5,6 +5,7 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "isolatedModules": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "lib": ["ESNext"]
   }
 }
