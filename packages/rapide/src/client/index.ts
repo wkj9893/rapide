@@ -12,6 +12,7 @@ async function waitForRestart(timeout = 1000) {
       await fetch('/')
       break
     } catch (err) {
+      console.log(err)
       await new Promise((resolve) => setTimeout(resolve, timeout))
     }
   }
@@ -36,6 +37,7 @@ socket.onmessage = ({ data }) => {
 
 async function handleMessage(data: HMRMessage) {
   if (data.type === 'connected') {
+    return
   } else if (data.type === 'reload') {
     window.location.reload()
   } else if (data.type === 'update') {
@@ -48,7 +50,7 @@ export function createHotContext(url: string) {
 
   const hot = {
     pathname,
-    accept(callback: Function) {
+    accept(callback: () => void) {
       callback()
     }
   }

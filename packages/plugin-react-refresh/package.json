@@ -12,10 +12,10 @@
   "author": "wkj",
   "license": "MIT",
   "dependencies": {
-    "@babel/core": "^7.14.8",
+    "@babel/core": "^7.15.5",
     "react-refresh": "^0.10.0"
   },
   "devDependencies": {
-    "esbuild": "^0.12.16"
+    "esbuild": "^0.12.26"
   }
 }

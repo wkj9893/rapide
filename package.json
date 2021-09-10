@@ -9,11 +9,11 @@
     "format": "prettier --write 'packages/**/*.ts'"
   },
   "devDependencies": {
-    "prettier": "^2.3.2"
+    "prettier": "^2.4.0"
   },
   "prettier": {
     "tabWidth": 2,
-    "printWidth":80,
+    "printWidth": 80,
     "semi": false,
     "singleQuote": true,
     "trailingComma": "none"

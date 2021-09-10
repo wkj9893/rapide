@@ -84,7 +84,7 @@ async function createServer(config: RapideConfig): Promise<RapideServer> {
   const wss = createWebsocketServer(httpServer)
   const watcher = createWatcher(rootPath)
   const send = (data: HMRMessage) => {
-    // @ts-ignore
+    // @ts-ignore:new new @types/ws
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(data))

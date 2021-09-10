@@ -1,22 +1,5 @@
 import { builtinModules } from 'module'
-
-interface OnResolveArgs {
-  path: string
-  importer: string
-  namespace: string
-  resolveDir: string
-  kind: ResolveKind
-  pluginData: any
-}
-
-type ResolveKind =
-  | 'entry-point'
-  | 'import-statement'
-  | 'require-call'
-  | 'dynamic-import'
-  | 'require-resolve'
-  | 'import-rule'
-  | 'url-token'
+import { OnResolveArgs } from 'esbuild'
 
 const filter = new RegExp(
   builtinModules
@@ -27,7 +10,12 @@ const filter = new RegExp(
 
 const preBundlePlugin = {
   name: 'pre-bundle',
-  setup(build: any) {
+  setup(build: {
+    onResolve: (
+      arg0: { filter: RegExp },
+      arg1: (args: OnResolveArgs) => { path: string; external: boolean }
+    ) => void
+  }) {
     build.onResolve({ filter }, (args: OnResolveArgs) => {
       return { path: args.path, external: true }
     })

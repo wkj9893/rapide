@@ -55,7 +55,7 @@ import.meta.hot = createHotContext(import.meta.url);\n` + code
 export async function createHttpServer(config: RapideConfig) {
   const urls = new Set()
   const server = http.createServer(async (req, res) => {
-    let { url } = req
+    const { url } = req
     if (!url) {
       return res.writeHead(404).end()
     }

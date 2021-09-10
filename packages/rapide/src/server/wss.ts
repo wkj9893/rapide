@@ -1,5 +1,5 @@
 import { Server } from 'http'
-// @ts-ignore
+// @ts-ignore:need new types/ws
 import { WebSocketServer } from 'ws'
 
 export function createWebsocketServer(server: Server) {
