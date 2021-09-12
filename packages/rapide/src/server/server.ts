@@ -30,7 +30,7 @@ updateStyle(id,css);`
 
   if (ext === '.html') {
     code +=
-      '<script type="module" src="node_modules/rapide/client.js"></script>'
+      '<script type="module" src="/node_modules/rapide/client.js"></script>'
   }
 
   if (loaderMap[ext]) {
@@ -83,12 +83,13 @@ export async function createHttpServer(config: RapideConfig) {
     }
     //  for path without extension resolve to html
     else if (!path.extname(url)) {
-      subPath === path.resolve(url.slice(1), '.html')
+      subPath = url.slice(1) + '.html'
     } else {
       subPath = url.slice(1)
     }
     const ext = path.extname(subPath)
     const codePath = path.resolve(rootPath, subPath)
+    console.log(codePath)
     const cacheFilePath =
       url === '/node_modules/rapide/client.js'
         ? path.resolve(__dirname, 'client.js')

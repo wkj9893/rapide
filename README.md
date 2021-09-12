@@ -5,13 +5,13 @@
 With NPM:
 
 ```bash
-$ npm init vite@latest
+$ npm init rapide@latest
 ```
 
 With Yarn:
 
 ```bash
-$ yarn create vite
+$ yarn create rapide
 ```
 
 With PNPM:

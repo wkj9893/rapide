@@ -94,6 +94,7 @@ async function createServer(config: RapideConfig): Promise<RapideServer> {
 
   watcher.on('change', (filePath: string) => {
     const ext = path.extname(filePath)
+    // hot reload(jsx,tsx,css)
     if (ext === '.jsx' || ext === '.tsx' || ext === '.css') {
       const currentTime = new Date().getTime()
       send({

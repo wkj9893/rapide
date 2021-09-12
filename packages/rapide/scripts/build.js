@@ -1,21 +1,28 @@
-const { build } = require("esbuild");
+const { build } = require('esbuild')
 
 const promise1 = build({
-  entryPoints: ["src/cli.ts"],
-  platform: "node",
+  entryPoints: ['src/cli.ts'],
+  platform: 'node',
   bundle: true,
-  outfile: "cli.js",
-  external: ["esbuild", "chokidar", "ws"],
-});
+  outfile: 'cli.js',
+  external: ['esbuild', 'ws']
+})
 
 const promise2 = build({
-  entryPoints: ["index.ts"],
-  platform: "node",
+  entryPoints: ['index.ts'],
+  platform: 'node',
   bundle: true,
-  outfile: "index.js",
-  external: ["esbuild", "chokidar", "ws"],
-});
+  outfile: 'index.js',
+  external: ['esbuild', 'chokidar', 'ws']
+})
 
-Promise.allSettled([promise1, promise2]).then((values) => {
-  console.log(values);
-});
+const promise3 = build({
+  entryPoints: ['src/client/index.ts'],
+  bundle:true,
+  outfile:'client.js',
+  format:'esm'
+})
+
+Promise.allSettled([promise1, promise2,promise3]).then((values) => {
+  console.log(values)
+})

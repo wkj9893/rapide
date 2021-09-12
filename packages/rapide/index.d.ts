@@ -1,4 +1,5 @@
 /// <reference types="node" />
+/// <reference types="ws" />
 import { Server } from 'http'
 import WebSocket = require('ws')
 import { FSWatcher } from 'chokidar'

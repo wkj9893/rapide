@@ -26,10 +26,8 @@
   },
   "scripts": {
     "test": "afz",
-    "lint": "deno lint src scripts test",
-    "dev-client": "esbuild client/index.ts --bundle --format=esm --outfile=client.js --watch",
-    "dev-server": "esbuild index.ts --bundle --platform=node --outfile=index.js --external:esbuild --watch",
-    "build-client": "esbuild client/index.ts --bundle --minify --format=esm --outfile=client.js",
+    "lint": "deno lint src scripts test && tsc -p . --noEmit",
+    "watch": "node scripts/watch.js",
     "build": "node scripts/build.js"
   },
   "dependencies": {

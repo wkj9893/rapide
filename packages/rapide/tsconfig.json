@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
     "strict": true,
     "resolveJsonModule": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
+    "moduleResolution": "Node",
     "isolatedModules": true,
+    "noImplicitAny": true,
     "noUnusedLocals": true,
-    "lib": ["ESNext"]
   }
 }

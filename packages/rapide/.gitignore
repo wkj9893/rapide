@@ -7,3 +7,5 @@ node_modules/
 # generated files
 cli.js
 index.js
+client.js
+cache/
