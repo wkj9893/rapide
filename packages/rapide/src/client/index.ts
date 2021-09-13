@@ -12,7 +12,6 @@ async function waitForRestart(timeout = 1000) {
       await fetch('/')
       break
     } catch (err) {
-      console.log(err)
       await new Promise((resolve) => setTimeout(resolve, timeout))
     }
   }

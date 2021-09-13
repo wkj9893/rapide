@@ -17,8 +17,8 @@ export default async function getExports(modulePath: string) {
         paths.push(path.resolve(path.dirname(currentPath), reexport))
       }
     }
-  } catch (e) {
-    console.error(e)
+  } catch (err) {
+    console.log(err)
     return []
   }
   const set = new Set(exports)

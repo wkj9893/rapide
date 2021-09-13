@@ -8,10 +8,10 @@ import { lightBlue } from './utils/color'
 import {
   RapideConfig,
   rootPath,
-  MEDIA_TYPES,
   cacheSet,
   loaderMap,
-  cachePath
+  cachePath,
+  getContentType
 } from '.'
 
 export async function transform(
@@ -33,8 +33,9 @@ updateStyle(id,css);`
       '<script type="module" src="/node_modules/rapide/client.js"></script>'
   }
 
-  if (loaderMap[ext]) {
-    code = (await esbuildTransform(code, loaderMap[ext])).code
+  const loader = loaderMap.get(ext)
+  if (loader) {
+    code = (await esbuildTransform(code, loader)).code
   }
 
   for (const plugin of config.plugins) {
@@ -68,9 +69,9 @@ export async function createHttpServer(config: RapideConfig) {
       code = await transform(code, codePath, config)
       return res
         .writeHead(200, {
-          'Content-Type': MEDIA_TYPES[path.extname(codePath)] ?? 'text/plain',
+          'Content-Type': getContentType(path.extname(codePath)),
           'Cache-Control': 'no-cache',
-          etag: new Date().getTime()
+          ETag: `"${Date.now()}"`
         })
         .end(code)
     }
@@ -89,38 +90,39 @@ export async function createHttpServer(config: RapideConfig) {
     }
     const ext = path.extname(subPath)
     const codePath = path.resolve(rootPath, subPath)
-    console.log(codePath)
     const cacheFilePath =
       url === '/node_modules/rapide/client.js'
         ? path.resolve(__dirname, 'client.js')
         : path.resolve(cachePath, subPath)
 
-    if (cacheSet.has(codePath)) {
+    if (cacheSet.has(codePath) && req.headers['if-none-match']) {
       return res.writeHead(304).end()
     }
 
     //  node_modules cache files or client code
     if (fs.existsSync(cacheFilePath)) {
-      const content = await readFile(cacheFilePath, 'utf-8')
+      const content = await readFile(cacheFilePath)
       cacheSet.add(codePath)
       return res
         .writeHead(200, {
-          'Content-Type': MEDIA_TYPES[ext] ?? 'text/plain',
+          'Content-Type': getContentType(ext),
           'Cache-Control': 'no-cache',
-          etag: new Date().getTime()
+          ETag: `"${Date.now()}"`
         })
         .end(content)
     }
-
+    if (!fs.existsSync(codePath)) {
+      return res.writeHead(404).end(`<h2>${codePath} not found</h2>`)
+    }
     try {
       let code = await readFile(codePath, 'utf-8')
       code = await transform(code, codePath, config)
       cacheSet.add(codePath)
       return res
         .writeHead(200, {
-          'Content-Type': MEDIA_TYPES[ext] ?? 'text/plain',
+          'Content-Type': getContentType(ext),
           'Cache-Control': 'no-cache',
-          etag: new Date().getTime()
+          ETag: `"${Date.now()}"`
         })
         .end(code)
     } catch (err) {

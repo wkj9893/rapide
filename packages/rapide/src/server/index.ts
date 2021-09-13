@@ -39,32 +39,39 @@ interface RapidePlugin {
     | ((code: string, codePath: string) => Promise<string>)
 }
 
-const MEDIA_TYPES: Record<string, string> = {
-  '.md': 'text/markdown',
-  '.html': 'text/html',
-  '.htm': 'text/html',
-  '.json': 'application/json',
-  '.map': 'application/json',
-  '.txt': 'text/plain',
-  '.ts': 'application/javascript',
-  '.tsx': 'application/javascript',
-  '.js': 'application/javascript',
-  '.jsx': 'application/javascript',
-  '.gz': 'application/gzip',
-  '.css': 'application/javascript',
-  '.wasm': 'application/wasm',
-  '.mjs': 'application/javascript',
-  '.svg': 'image/svg+xml'
+interface RapideServer {
+  httpServer: Server
+  port: number
+  wss: WebSocket.Server
+  watcher: FSWatcher
 }
 
-const loaderMap: Record<string, Loader> = {
-  '.js': 'js',
-  '.jsx': 'jsx',
-  '.ts': 'ts',
-  '.tsx': 'tsx',
-  '.css': 'css',
-  '.json': 'json'
-}
+const MEDIA_TYPES = new Map([
+  ['.md', 'text/markdown'],
+  ['.html', 'text/html'],
+  ['.htm', 'text/html'],
+  ['.json', 'application/json'],
+  ['.map', 'application/json'],
+  ['.txt', 'text/plain'],
+  ['.ts', 'application/javascript'],
+  ['.tsx', 'application/javascript'],
+  ['.js', 'application/javascript'],
+  ['.jsx', 'application/javascript'],
+  ['.gz', 'application/gzip'],
+  ['.css', 'application/javascript'],
+  ['.wasm', 'application/wasm'],
+  ['.mjs', 'application/javascript'],
+  ['.svg', 'image/svg+xml']
+])
+
+const loaderMap: Map<string, Loader> = new Map([
+  ['.js', 'js'],
+  ['.jsx', 'jsx'],
+  ['.ts', 'ts'],
+  ['.tsx', 'tsx'],
+  ['.css', 'css'],
+  ['.json', 'json']
+])
 
 const cacheSet: Set<string> = new Set()
 
@@ -72,11 +79,12 @@ const cachePath = path.resolve(__dirname, 'cache')
 
 const rootPath = resolveRoot()
 
-interface RapideServer {
-  httpServer: Server
-  port: number
-  wss: WebSocket.Server
-  watcher: FSWatcher
+function getContentType(ext: string): string {
+  const contentType = MEDIA_TYPES.get(ext) ?? 'text/plain'
+  if (contentType.startsWith('text')) {
+    return contentType + ';charset=UTF-8'
+  }
+  return contentType
 }
 
 async function createServer(config: RapideConfig): Promise<RapideServer> {
@@ -114,7 +122,7 @@ export {
   cachePath,
   rootPath,
   loaderMap,
-  MEDIA_TYPES,
+  getContentType,
   preCreateServer,
   createServer,
   cyan,

@@ -20,8 +20,8 @@ export async function buildFiles(entryPoints: string[], outdir: string) {
       outdir,
       plugins: [preBundlePlugin]
     })
-  } catch (error) {
-    console.log(error)
+  } catch (err) {
+    console.log(err)
     process.exit(1)
   }
 }
