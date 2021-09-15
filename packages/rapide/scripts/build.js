@@ -18,11 +18,11 @@ const promise2 = build({
 
 const promise3 = build({
   entryPoints: ['src/client/index.ts'],
-  bundle:true,
-  outfile:'client.js',
-  format:'esm'
+  bundle: true,
+  outfile: 'client.js',
+  format: 'esm'
 })
 
-Promise.allSettled([promise1, promise2,promise3]).then((values) => {
+Promise.allSettled([promise1, promise2, promise3]).then((values) => {
   console.log(values)
 })

@@ -17,6 +17,6 @@ const p2 = esbuild.build({
   watch: true
 })
 
-Promise.all([p1,p2]).catch((e)=>{
+Promise.all([p1, p2]).catch((e) => {
   console.log(e)
 })
