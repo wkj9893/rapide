@@ -1,21 +1,4 @@
 {
   "name": "rapide-monorepo",
-  "private": true,
-  "engines": {
-    "node": ">=12",
-    "pnpm": ">=6"
-  },
-  "scripts": {
-    "format": "prettier --write 'packages/**/*.ts'"
-  },
-  "devDependencies": {
-    "prettier": "^2.4.0"
-  },
-  "prettier": {
-    "tabWidth": 2,
-    "printWidth": 80,
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "none"
-  }
+  "private": true
 }
