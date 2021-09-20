@@ -37,11 +37,9 @@ updateStyle(id,css);`
   if (loader) {
     code = (await esbuildTransform(code, loader)).code
   }
-
   for (const plugin of config.plugins) {
-    code = await plugin.transform(code, codePath)
+    code = await require(plugin).default().transform(code, codePath)
   }
-
   if (ext === '.ts' || ext === '.js' || ext === '.tsx' || ext === '.jsx') {
     code = await importAnalysis(code, codePath, config.ESModuleMap)
     if (ext === '.jsx' || ext === '.tsx') {

@@ -27,16 +27,9 @@ interface UpdateMessage {
 }
 
 interface RapideConfig {
-  plugins: RapidePlugin[]
+  plugins: string[]
   ESModuleMap: Map<string, string>
   port: number
-}
-
-interface RapidePlugin {
-  name: string
-  transform:
-    | ((code: string, codePath: string) => string)
-    | ((code: string, codePath: string) => Promise<string>)
 }
 
 interface RapideServer {
@@ -101,6 +94,7 @@ async function createServer(config: RapideConfig): Promise<RapideServer> {
   }
 
   watcher.on('change', (filePath: string) => {
+    cacheSet.delete(filePath)
     const ext = path.extname(filePath)
     // hot reload(jsx,tsx,css)
     if (ext === '.jsx' || ext === '.tsx' || ext === '.css') {
@@ -111,7 +105,6 @@ async function createServer(config: RapideConfig): Promise<RapideServer> {
       })
       return
     }
-    cacheSet.delete(filePath)
     send({ type: 'reload' })
   })
   return { httpServer, port, wss, watcher }
@@ -130,4 +123,4 @@ export {
   build
 }
 
-export type { RapideConfig, RapidePlugin, HMRMessage }
+export type { RapideConfig, HMRMessage }

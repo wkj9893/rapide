@@ -69,7 +69,7 @@ export function resolvePath(
 
 /**
  *
- * @param filePath convert relative path to absolute path starting with /
+ * @param filePath convert relative path to absolute path starting with / (for browser)
  * @returns normalized path
  */
 export function normalize(filePath: string): string {

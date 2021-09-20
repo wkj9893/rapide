@@ -18,26 +18,30 @@ importers:
 
   packages/rapide:
     specifiers:
-      '@types/node': ^16.7.13
+      '@types/node': ^16.9.4
+      '@types/ws': ^7.4.7
+      '@wkj9893/prettier-config': ^1.0.1
       afz: ^0.1.3
       chokidar: ^3.5.2
       cjs-module-lexer: ^1.2.2
-      es-module-lexer: ^0.7.1
-      esbuild: ^0.12.25
-      prettier: ^2.4.0
-      typescript: ^4.4.2
-      ws: ^8.2.1
+      es-module-lexer: ^0.9.0
+      esbuild: ^0.12.28
+      prettier: ^2.4.1
+      typescript: ^4.4.3
+      ws: ^8.2.2
     dependencies:
       chokidar: 3.5.2
-      esbuild: 0.12.25
-      ws: 8.2.1
+      esbuild: 0.12.28
+      ws: 8.2.2
     devDependencies:
-      '@types/node': 16.7.13
+      '@types/node': 16.9.4
+      '@types/ws': 7.4.7
+      '@wkj9893/prettier-config': 1.0.1
       afz: 0.1.3
       cjs-module-lexer: 1.2.2
-      es-module-lexer: 0.7.1
-      prettier: 2.4.0
-      typescript: 4.4.2
+      es-module-lexer: 0.9.0
+      prettier: 2.4.1
+      typescript: 4.4.3
 
 packages:
 
@@ -254,8 +258,18 @@ packages:
       to-fast-properties: 2.0.0
     dev: false
 
-  /@types/node/16.7.13:
-    resolution: {integrity: sha512-pLUPDn+YG3FYEt/pHI74HmnJOWzeR+tOIQzUx93pi9M7D8OE7PSLr97HboXwk5F+JS+TLtWuzCOW97AHjmOXXA==}
+  /@types/node/16.9.4:
+    resolution: {integrity: sha512-KDazLNYAGIuJugdbULwFZULF9qQ13yNWEBFnfVpqlpgAAo6H/qnM9RjBgh0A0kmHf3XxAKLdN5mTIng9iUvVLA==}
+    dev: true
+
+  /@types/ws/7.4.7:
+    resolution: {integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==}
+    dependencies:
+      '@types/node': 16.9.4
+    dev: true
+
+  /@wkj9893/prettier-config/1.0.1:
+    resolution: {integrity: sha512-vT6cf8O9Jlk5WysW9fbRYzRonsxRhA0bx9LUi4Jovv0LioMVvgdcidnz0vigRWYbrQ6MedbFozENvIxCZ54FuQ==}
     dev: true
 
   /afz/0.1.3:
@@ -263,7 +277,7 @@ packages:
     engines: {node: '>=12.12.0'}
     hasBin: true
     dependencies:
-      esbuild: 0.12.25
+      esbuild: 0.12.28
     dev: true
 
   /ansi-styles/3.2.1:
@@ -373,20 +387,20 @@ packages:
     resolution: {integrity: sha512-rHQszGg2KLMqOWPNTpwCnlp7Kb85haJa8j089DJCreZueykoSN/in+EMlay3SSDMNKR4VGPvfskxofHV18xVJg==}
     dev: false
 
-  /es-module-lexer/0.7.1:
-    resolution: {integrity: sha512-MgtWFl5No+4S3TmhDmCz2ObFGm6lEpTnzbQi+Dd+pw4mlTIZTmM2iAs5gRlmx5zS9luzobCSBSI90JM/1/JgOw==}
+  /es-module-lexer/0.9.0:
+    resolution: {integrity: sha512-qU2eN/XHsrl3E4y7mK1wdWnyy5c8gXtCbfP6Xcsemm7fPUR1PIV1JhZfP7ojcN0Fzp69CfrS3u76h2tusvfKiQ==}
     dev: true
-
-  /esbuild/0.12.25:
-    resolution: {integrity: sha512-woie0PosbRSoN8gQytrdCzUbS2ByKgO8nD1xCZkEup3D9q92miCze4PqEI9TZDYAuwn6CruEnQpJxgTRWdooAg==}
-    hasBin: true
-    requiresBuild: true
 
   /esbuild/0.12.26:
     resolution: {integrity: sha512-YmTkhPKjvTJ+G5e96NyhGf69bP+hzO0DscqaVJTi5GM34uaD4Ecj7omu5lJO+NrxCUBRhy2chONLK1h/2LwoXA==}
     hasBin: true
     requiresBuild: true
     dev: true
+
+  /esbuild/0.12.28:
+    resolution: {integrity: sha512-pZ0FrWZXlvQOATlp14lRSk1N9GkeJ3vLIwOcUoo3ICQn9WNR4rWoNi81pbn6sC1iYUy7QPqNzI3+AEzokwyVcA==}
+    hasBin: true
+    requiresBuild: true
 
   /escalade/3.1.1:
     resolution: {integrity: sha512-k0er2gUkLf8O0zKJiAhmkTnJlTvINGv7ygDNPbeIsX/TJjGJZHuh9B2UxbsaEkmlEo9MfhrSzmhIlhRlI2GXnw==}
@@ -499,8 +513,8 @@ packages:
     engines: {node: '>=8.6'}
     dev: false
 
-  /prettier/2.4.0:
-    resolution: {integrity: sha512-DsEPLY1dE5HF3BxCRBmD4uYZ+5DCbvatnolqTqcxEgKVZnL2kUfyu7b8pPQ5+hTBkdhU9SLUmK0/pHb07RE4WQ==}
+  /prettier/2.4.1:
+    resolution: {integrity: sha512-9fbDAXSBcc6Bs1mZrDYb3XKzDLm4EXXL9sC1LqKP5rZkT6KRr/rf9amVUcODVXgguK/isJz0d0hP72WeaKWsvA==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
@@ -550,14 +564,14 @@ packages:
       is-number: 7.0.0
     dev: false
 
-  /typescript/4.4.2:
-    resolution: {integrity: sha512-gzP+t5W4hdy4c+68bfcv0t400HVJMMd2+H9B7gae1nQlBzCqvrXX+6GL/b3GAgyTH966pzrZ70/fRjwAtZksSQ==}
+  /typescript/4.4.3:
+    resolution: {integrity: sha512-4xfscpisVgqqDfPaJo5vkd+Qd/ItkoagnHpufr+i2QCHBsNYp+G7UAoyFl8aPtx879u38wPV65rZ8qbGZijalA==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
 
-  /ws/8.2.1:
-    resolution: {integrity: sha512-XkgWpJU3sHU7gX8f13NqTn6KQ85bd1WU7noBHTT8fSohx7OS1TPY8k+cyRPCzFkia7C4mM229yeHr1qK9sM4JQ==}
+  /ws/8.2.2:
+    resolution: {integrity: sha512-Q6B6H2oc8QY3llc3cB8kVmQ6pnJWVQbP7Q5algTcIxx7YEpc0oU4NBVHlztA7Ekzfhw2r0rPducMUiCGWKQRzw==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1

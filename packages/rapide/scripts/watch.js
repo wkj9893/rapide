@@ -4,6 +4,7 @@ const p1 = esbuild.build({
   entryPoints: ['src/cli.ts'],
   platform: 'node',
   bundle: true,
+  minify:true,
   outfile: 'cli.js',
   external: ['esbuild', 'chokidar', 'ws'],
   watch: true
@@ -12,6 +13,7 @@ const p1 = esbuild.build({
 const p2 = esbuild.build({
   entryPoints: ['src/client/index.ts'],
   bundle: true,
+  minify:true,
   outfile: 'client.js',
   format: 'esm',
   watch: true
