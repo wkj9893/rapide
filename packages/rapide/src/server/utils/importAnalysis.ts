@@ -48,3 +48,5 @@ export default async function importAnalysis(
   }
   return res
 }
+
+function handleDeps() {}

@@ -1,6 +1,6 @@
 {
   "name": "rapide",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "web dev build tool",
   "author": "wkj",
   "license": "MIT",
@@ -33,11 +33,11 @@
   },
   "dependencies": {
     "chokidar": "^3.5.2",
-    "esbuild": "^0.12.28",
+    "esbuild": "^0.13.1",
     "ws": "^8.2.2"
   },
   "devDependencies": {
-    "@types/node": "^16.9.4",
+    "@types/node": "^16.9.6",
     "@types/ws": "^7.4.7",
     "@wkj9893/prettier-config": "^1.0.1",
     "afz": "^0.1.3",

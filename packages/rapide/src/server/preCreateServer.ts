@@ -7,7 +7,11 @@ import getExports from './utils/exports'
 import { cachePath, rootPath, RapideConfig } from '.'
 
 export async function preCreateServer(port = 3000): Promise<RapideConfig> {
-  const config: RapideConfig = { plugins: [], ESModuleMap: new Map(), port }
+  const config: RapideConfig = {
+    plugins: [],
+    ESModuleMap: new Map(),
+    port
+  }
   if (!fs.existsSync(cachePath)) {
     fs.mkdirSync(cachePath, { recursive: true })
   }
@@ -16,7 +20,7 @@ export async function preCreateServer(port = 3000): Promise<RapideConfig> {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
     const rapideConfig = packageJson.rapide ?? {}
     const deps = packageJson.dependencies ?? {}
-    config.plugins = rapideConfig.plugins
+    config.plugins = rapideConfig.plugins ?? []
     const cachePackageJsonPath = path.resolve(cachePath, 'package.json')
     if (!fs.existsSync(cachePackageJsonPath)) {
       fs.writeFileSync(cachePackageJsonPath, '{}')
@@ -55,7 +59,7 @@ export async function preCreateServer(port = 3000): Promise<RapideConfig> {
   return config
 }
 
-async function writeModFile(dependency: string, filePath: string) {
+export async function writeModFile(dependency: string, filePath: string) {
   const cjsExports = await getExports(filePath)
   await writeFileString(
     path.resolve(cachePath, `node_modules/${dependency}/mod.js`),

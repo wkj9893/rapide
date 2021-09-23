@@ -1,0 +1,24 @@
+{
+  "name": "rapide-project",
+  "private": true,
+  "scripts": {
+    "dev": "rapide",
+    "build": "rapide build"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.20",
+    "@types/react-dom": "^17.0.9",
+    "rapide": "workspace:^0.2.6",
+    "rapide-react": "workspace:^0.0.1",
+    "typescript": "^4.4.2"
+  },
+  "rapide": {
+    "plugins": [
+      "rapide-react"
+    ]
+  }
+}

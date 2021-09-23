@@ -10,6 +10,21 @@ export async function buildFiles(entryPoints: string[], outdir: string) {
   if (entryPoints.length < 1) {
     return
   }
+  if (entryPoints.length == 1) {
+    try {
+      await esbuild.build({
+        entryPoints,
+        bundle: true,
+        sourcemap: true,
+        format: 'esm',
+        outfile: path.resolve(outdir, 'index.js'),
+        plugins: [preBundlePlugin]
+      })
+    } catch (err) {
+      console.log(err)
+      process.exit(1)
+    }
+  }
   try {
     await esbuild.build({
       entryPoints,

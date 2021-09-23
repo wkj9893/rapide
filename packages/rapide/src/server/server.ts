@@ -13,6 +13,8 @@ import {
   cachePath,
   getContentType
 } from '.'
+import { buildFiles } from './utils/build'
+import { writeModFile } from './preCreateServer'
 
 export async function transform(
   code: string,
@@ -20,6 +22,16 @@ export async function transform(
   config: RapideConfig
 ): Promise<string> {
   const ext = path.extname(codePath)
+
+  let shouldSkip = false
+  for (const plugin of config.plugins) {
+    const p = require(plugin).default()
+    code = await p.transform(code, codePath)
+    if (p.skip && p.skip.includes(ext)) {
+      shouldSkip = true
+    }
+  }
+
   if (ext === '.css') {
     return `import { createHotContext, updateStyle } from '/node_modules/rapide/client.js';
 import.meta.hot = createHotContext(import.meta.url);
@@ -34,12 +46,10 @@ updateStyle(id,css);`
   }
 
   const loader = loaderMap.get(ext)
-  if (loader) {
+  if (loader && !shouldSkip) {
     code = (await esbuildTransform(code, loader)).code
   }
-  for (const plugin of config.plugins) {
-    code = await require(plugin).default().transform(code, codePath)
-  }
+
   if (ext === '.ts' || ext === '.js' || ext === '.tsx' || ext === '.jsx') {
     code = await importAnalysis(code, codePath, config.ESModuleMap)
     if (ext === '.jsx' || ext === '.tsx') {
@@ -110,6 +120,17 @@ export async function createHttpServer(config: RapideConfig) {
         .end(content)
     }
     if (!fs.existsSync(codePath)) {
+      if (codePath.endsWith('mod.js')) {
+        const p1 = buildFiles(
+          [codePath.slice(0, codePath.length - 7)],
+          path.resolve(cachePath, subPath.slice(0, subPath.length - 7))
+        )
+        const p2 = writeModFile(
+          subPath.slice(13, subPath.length - 7),
+          codePath.slice(0, codePath.length - 7)
+        )
+        await Promise.all([p1, p2])
+      }
       return res.writeHead(404).end(`<h2>${codePath} not found</h2>`)
     }
     try {
@@ -151,3 +172,11 @@ export async function createHttpServer(config: RapideConfig) {
   })
   return { httpServer: server, port }
 }
+
+// async function handleNestedDeps(config: RapideConfig, entryPoint: string) {
+//   await buildFiles(
+//     [entryPoint],
+//     path.resolve(cachePath, 'node_modules'),
+//     config.deps
+//   )
+// }
