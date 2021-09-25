@@ -13,8 +13,6 @@ import {
   cachePath,
   getContentType
 } from '.'
-import { buildFiles } from './utils/build'
-import { writeModFile } from './preCreateServer'
 
 export async function transform(
   code: string,
@@ -51,7 +49,7 @@ updateStyle(id,css);`
   }
 
   if (ext === '.ts' || ext === '.js' || ext === '.tsx' || ext === '.jsx') {
-    code = await importAnalysis(code, codePath, config.ESModuleMap)
+    code = await importAnalysis(code, codePath, config.map)
     if (ext === '.jsx' || ext === '.tsx') {
       code =
         `import {createHotContext} from '/node_modules/rapide/client.js';
@@ -120,18 +118,8 @@ export async function createHttpServer(config: RapideConfig) {
         .end(content)
     }
     if (!fs.existsSync(codePath)) {
-      if (codePath.endsWith('mod.js')) {
-        const p1 = buildFiles(
-          [codePath.slice(0, codePath.length - 7)],
-          path.resolve(cachePath, subPath.slice(0, subPath.length - 7))
-        )
-        const p2 = writeModFile(
-          subPath.slice(13, subPath.length - 7),
-          codePath.slice(0, codePath.length - 7)
-        )
-        await Promise.all([p1, p2])
-      }
-      return res.writeHead(404).end(`<h2>${codePath} not found</h2>`)
+      console.log(`${codePath} need to be found`)
+      return res.writeHead(404).end(`${codePath} not found`)
     }
     try {
       let code = await readFile(codePath, 'utf-8')
@@ -172,11 +160,3 @@ export async function createHttpServer(config: RapideConfig) {
   })
   return { httpServer: server, port }
 }
-
-// async function handleNestedDeps(config: RapideConfig, entryPoint: string) {
-//   await buildFiles(
-//     [entryPoint],
-//     path.resolve(cachePath, 'node_modules'),
-//     config.deps
-//   )
-// }

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { createServer, preCreateServer, cyan, lightBlue, build } from './server'
 import { version } from '../package.json'
+import { performance } from 'perf_hooks'
 
 const args = process.argv.slice(2)
 

@@ -8,5 +8,6 @@
     "isolatedModules": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
+    "esModuleInterop": true
   }
 }

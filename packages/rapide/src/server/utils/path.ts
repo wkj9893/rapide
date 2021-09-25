@@ -1,11 +1,13 @@
 import fs = require('fs')
 import path = require('path')
 
+export const rootPath = resolveRoot()
+
 /**
  * get project root directory absolute path
  * @returns project root directory
  */
-export function resolveRoot(): string {
+function resolveRoot(): string {
   let rootDir = process.cwd()
   let prev = ''
   while (true) {
@@ -56,11 +58,17 @@ export function resolvePath(
       }
       if (findOrder < length) {
         resolve(
-          normalize(hasExtension ? filePath : filePath + order[findOrder])
+          normalize(
+            rootPath,
+            hasExtension ? filePath : filePath + order[findOrder]
+          )
         )
       } else {
         reject(
-          `can not find file path ${normalize(filePath + order[findOrder])}`
+          `can not find file path ${normalize(
+            rootPath,
+            filePath + order[findOrder]
+          )}`
         )
       }
     })
@@ -72,7 +80,6 @@ export function resolvePath(
  * @param filePath convert relative path to absolute path starting with / (for browser)
  * @returns normalized path
  */
-export function normalize(filePath: string): string {
-  const rootPath = resolveRoot()
-  return '/' + path.relative(rootPath, filePath).split(path.sep).join('/')
+export function normalize(basePath: string, filePath: string): string {
+  return '/' + path.relative(basePath, filePath).split(path.sep).join('/')
 }

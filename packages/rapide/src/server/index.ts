@@ -1,5 +1,5 @@
 import { Loader } from './utils/transform'
-import { resolveRoot, normalize } from './utils/path'
+import { rootPath, normalize } from './utils/path'
 import { createHttpServer } from './server'
 import path = require('path')
 import { createWatcher } from './watcher'
@@ -7,7 +7,7 @@ import { Server } from 'http'
 import WebSocket = require('ws')
 import { createWebsocketServer } from './wss'
 import { FSWatcher } from 'chokidar'
-import { preCreateServer } from './preCreateServer'
+import { Metadata, preCreateServer } from './preCreateServer'
 import { cyan, lightBlue } from './utils/color'
 import { build } from './utils/build'
 
@@ -28,7 +28,7 @@ interface UpdateMessage {
 
 interface RapideConfig {
   plugins: string[]
-  ESModuleMap: Map<string, string>
+  map: Map<string, Metadata>
   port: number
 }
 
@@ -69,8 +69,7 @@ const loaderMap: Map<string, Loader> = new Map([
 const cacheSet: Set<string> = new Set()
 
 const cachePath = path.resolve(__dirname, 'cache')
-
-const rootPath = resolveRoot()
+const metaJsonPath = path.resolve(cachePath, 'metadata.json')
 
 function getContentType(ext: string): string {
   const contentType = MEDIA_TYPES.get(ext) ?? 'text/plain'
@@ -85,12 +84,14 @@ async function createServer(config: RapideConfig): Promise<RapideServer> {
   const wss = createWebsocketServer(httpServer)
   const watcher = createWatcher(rootPath)
   const send = (data: HMRMessage) => {
-    // @ts-ignore:new new @types/ws
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(data))
+    //  TODO: @types/ws
+    wss.clients.forEach(
+      (client: { readyState: number; send: (arg0: string) => void }) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(data))
+        }
       }
-    })
+    )
   }
 
   watcher.on('change', (filePath: string) => {
@@ -101,7 +102,7 @@ async function createServer(config: RapideConfig): Promise<RapideServer> {
       const currentTime = new Date().getTime()
       send({
         type: 'update',
-        update: `${normalize(filePath)}/${currentTime}`
+        update: `${normalize(rootPath, filePath)}/${currentTime}`
       })
       return
     }
@@ -114,6 +115,7 @@ export {
   cacheSet,
   cachePath,
   rootPath,
+  metaJsonPath,
   loaderMap,
   getContentType,
   preCreateServer,

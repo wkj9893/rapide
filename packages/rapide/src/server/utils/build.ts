@@ -2,28 +2,13 @@ import esbuild = require('esbuild')
 import preBundlePlugin from '../plugins/preBundle'
 import { readFile } from 'fs/promises'
 import path = require('path')
-import { rootPath } from '..'
+import { cachePath, rootPath } from '..'
 import { transformHtml } from './html'
 import { writeFileString } from './file'
 
-export async function buildFiles(entryPoints: string[], outdir: string) {
+export async function buildFiles(entryPoints: string[]) {
   if (entryPoints.length < 1) {
     return
-  }
-  if (entryPoints.length == 1) {
-    try {
-      await esbuild.build({
-        entryPoints,
-        bundle: true,
-        sourcemap: true,
-        format: 'esm',
-        outfile: path.resolve(outdir, 'index.js'),
-        plugins: [preBundlePlugin]
-      })
-    } catch (err) {
-      console.log(err)
-      process.exit(1)
-    }
   }
   try {
     await esbuild.build({
@@ -32,7 +17,7 @@ export async function buildFiles(entryPoints: string[], outdir: string) {
       splitting: true,
       sourcemap: true,
       format: 'esm',
-      outdir,
+      outdir: path.resolve(cachePath, 'node_modules'),
       plugins: [preBundlePlugin]
     })
   } catch (err) {

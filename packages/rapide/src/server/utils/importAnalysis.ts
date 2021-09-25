@@ -1,11 +1,13 @@
-import { resolvePath } from './path'
+import { normalize, resolvePath } from './path'
 import path = require('path')
 import { init, parse } from 'es-module-lexer'
+import { getMetaData, Metadata, preBuild } from '../preCreateServer'
+import { cachePath } from '..'
 
 export default async function importAnalysis(
   code: string,
   codePath: string,
-  ESModuleMap: Map<string, string>
+  map: Map<string, Metadata>
 ) {
   await init
   const imports = parse(code)[0].filter((value) => value.n)
@@ -27,11 +29,15 @@ export default async function importAnalysis(
       }
       //  handle bare import specifiers, such as import moment from "moment"
       else {
-        if (ESModuleMap.has(str)) {
-          res += ESModuleMap.get(str)
-        } else {
-          res += `/node_modules/${str}/mod.js`
+        if (!map.get(str)) {
+          const start = performance.now()
+          console.log()
+          console.log('new dependency found:', str, 'rebuilding...')
+          map.set(str, getMetaData(str))
+          await preBuild(map)
+          console.log(`done in ${(performance.now() - start).toFixed()}ms`)
         }
+        res += normalize(cachePath, map.get(str)?.dest as string)
         i += str.length
         j++
       }
@@ -48,5 +54,3 @@ export default async function importAnalysis(
   }
   return res
 }
-
-function handleDeps() {}

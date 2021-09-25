@@ -18,7 +18,6 @@ export async function esbuildTransform(code: string, loader: Loader) {
   return await transform(code, {
     format: 'esm',
     loader,
-    sourcemap: true,
-    external: []
+    sourcemap: true
   })
 }
