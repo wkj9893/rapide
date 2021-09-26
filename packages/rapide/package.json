@@ -1,19 +1,19 @@
 {
   "name": "rapide",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "web dev build tool",
   "author": "wkj",
   "license": "MIT",
   "keywords": [
     "rapide"
   ],
-  "main": "index.js",
+  "main": "cli.js",
   "types": "index.d.ts",
   "bin": {
     "rapide": "cli.js"
   },
   "files": [
-    "index.js",
+    "cli.js",
     "index.d.ts",
     "client.js"
   ],
@@ -32,19 +32,19 @@
     "build": "node scripts/build.js"
   },
   "dependencies": {
-    "chokidar": "^3.5.2",
-    "esbuild": "^0.13.2",
-    "ws": "^8.2.2"
+    "esbuild": "^0.13.2"
   },
   "devDependencies": {
     "@types/node": "^16.10.1",
     "@types/ws": "^8.2.0",
     "@wkj9893/prettier-config": "^1.0.1",
     "afz": "^0.1.3",
+    "chokidar": "^3.5.2",
     "cjs-module-lexer": "^1.2.2",
     "es-module-lexer": "^0.9.0",
     "prettier": "^2.4.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "ws": "^8.2.2"
   },
   "prettier": "@wkj9893/prettier-config"
 }

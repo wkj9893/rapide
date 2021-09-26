@@ -1,24 +1,15 @@
 const { build } = require('esbuild')
 
-const promise1 = build({
+const p1 = build({
   entryPoints: ['src/cli.ts'],
   platform: 'node',
   bundle: true,
   minify: true,
   outfile: 'cli.js',
-  external: ['esbuild', 'ws']
+  external: ['esbuild']
 })
 
-const promise2 = build({
-  entryPoints: ['index.ts'],
-  platform: 'node',
-  bundle: true,
-  minify: true,
-  outfile: 'index.js',
-  external: ['esbuild', 'chokidar', 'ws']
-})
-
-const promise3 = build({
+const p2 = build({
   entryPoints: ['src/client/index.ts'],
   bundle: true,
   minify: true,
@@ -26,6 +17,6 @@ const promise3 = build({
   format: 'esm'
 })
 
-Promise.allSettled([promise1, promise2, promise3]).then((values) => {
-  console.log(values)
+Promise.all([p1, p2]).catch((e) => {
+  console.log(e)
 })
