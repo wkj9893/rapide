@@ -85,46 +85,66 @@ export function scanHtml(html: string): ImportSpecifier[] {
   }
 }
 
-export function transformHtml(html: string): { res: string; files: string[] } {
+export function transformHtml(html: string): {
+  result: string
+  files: string[]
+} {
   let i = 0
   let j = 0
-  let res = ''
+  let result = ''
   const files: string[] = []
   const imports = scanHtml(html)
 
   while (j < imports.length) {
     let { start, str } = imports[j]
     if (i === start) {
-      if (str.startsWith('/')) {
-        str = str.slice(1)
-      }
-      const filePath = path.resolve(rootPath, str)
+      const filePath = path.join(rootPath, str)
       i += str.length
       j++
       if (fs.existsSync(filePath)) {
         files.push(filePath)
         const ext = path.extname(filePath)
         if (ext === '.ts' || ext === '.tsx' || ext === '.jsx') {
-          res += path.relative(
+          result += path.relative(
             rootPath,
             filePath.slice(0, filePath.length - ext.length) + '.js'
           )
         } else {
-          res += path.relative(rootPath, filePath)
+          result += path.relative(rootPath, filePath)
         }
       } else {
-        res += str
+        result += str
       }
     } else {
       while (i < start) {
-        res += html[i]
+        result += html[i]
         i++
       }
     }
   }
   while (i < html.length) {
-    res += html[i]
+    result += html[i]
     i++
   }
-  return { res, files }
+  return { result, files }
+}
+
+export function findHtml(dir: string): string[] {
+  const res: string[] = []
+  find(dir)
+  return res
+
+  function find(dir: string) {
+    for (const fileName of fs.readdirSync(dir)) {
+      const filePath = path.resolve(dir, fileName)
+      const stat = fs.statSync(filePath)
+      if (stat.isFile() && path.extname(fileName) === '.html') {
+        res.push(filePath)
+        continue
+      }
+      if (stat.isDirectory()) {
+        find(filePath)
+      }
+    }
+  }
 }

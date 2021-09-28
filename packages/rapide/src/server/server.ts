@@ -117,10 +117,6 @@ export async function createHttpServer(config: RapideConfig) {
         })
         .end(content)
     }
-    if (!fs.existsSync(codePath)) {
-      console.log(`${codePath} need to be found`)
-      return res.writeHead(404).end(`${codePath} not found`)
-    }
     try {
       let code = await readFile(codePath, 'utf-8')
       code = await transform(code, codePath, config)

@@ -10,6 +10,8 @@ import { FSWatcher } from 'chokidar'
 import { Metadata, preCreateServer } from './preCreateServer'
 import { cyan, lightBlue } from './utils/color'
 import { build } from './utils/build'
+import { serve } from './utils/serve'
+import { getNetworkAddress } from './utils/network'
 
 type HMRMessage = ConnectedMessage | ReloadMessage | UpdateMessage
 
@@ -122,7 +124,9 @@ export {
   createServer,
   cyan,
   lightBlue,
-  build
+  build,
+  serve,
+  getNetworkAddress
 }
 
 export type { RapideConfig, HMRMessage }
