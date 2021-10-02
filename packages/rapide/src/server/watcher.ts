@@ -1,9 +1,9 @@
-import chokidar = require('chokidar')
+import chokidar = require("chokidar");
 
 export function createWatcher(dirPath: string) {
   return chokidar.watch(dirPath, {
-    ignored: ['**/node_modules/**', '**/.git/**'],
+    ignored: ["**/node_modules/**", "**/.git/**"],
     ignoreInitial: true,
-    ignorePermissionErrors: true
-  })
+    ignorePermissionErrors: true,
+  });
 }

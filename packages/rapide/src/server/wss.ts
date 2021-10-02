@@ -1,7 +1,7 @@
-import { Server } from 'http'
+import { Server } from "http";
 // @ts-ignore @types/ws
-import { WebSocketServer } from 'ws'
+import { WebSocketServer } from "ws";
 
 export function createWebsocketServer(server: Server) {
-  return new WebSocketServer({ server })
+  return new WebSocketServer({ server });
 }

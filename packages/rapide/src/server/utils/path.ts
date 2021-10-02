@@ -1,24 +1,24 @@
-import fs = require('fs')
-import path = require('path')
+import fs = require("fs");
+import path = require("path");
 
-export const rootPath = resolveRoot()
+export const rootPath = resolveRoot();
 
 /**
  * get project root directory absolute path
  * @returns project root directory
  */
 function resolveRoot(): string {
-  let rootDir = process.cwd()
-  let prev = ''
+  let rootDir = process.cwd();
+  let prev = "";
   while (true) {
-    if (fs.existsSync(path.resolve(rootDir, 'package.json'))) {
-      return rootDir
+    if (fs.existsSync(path.resolve(rootDir, "package.json"))) {
+      return rootDir;
     }
     if (prev === rootDir) {
-      return process.cwd()
+      return process.cwd();
     }
-    prev = rootDir
-    rootDir = path.dirname(rootDir)
+    prev = rootDir;
+    rootDir = path.dirname(rootDir);
   }
 }
 
@@ -31,28 +31,28 @@ function resolveRoot(): string {
  */
 export function resolvePath(
   filePath: string,
-  order = ['.tsx', '.ts', '.jsx', '.js', '.css', '.json']
+  order = [".tsx", ".ts", ".jsx", ".js", ".css", ".json"],
 ): Promise<string> {
-  const fileName = filePath.split(path.sep).pop() as string
-  const hasExtension = Boolean(path.extname(fileName))
-  const dirPath = path.dirname(filePath)
-  const length = order.length
-  let findOrder = length
+  const fileName = filePath.split(path.sep).pop() as string;
+  const hasExtension = Boolean(path.extname(fileName));
+  const dirPath = path.dirname(filePath);
+  const length = order.length;
+  let findOrder = length;
   return new Promise((resolve, reject) => {
     fs.readdir(dirPath, (err, files) => {
       if (err) {
-        reject(err)
+        reject(err);
       }
       for (const file of files) {
-        const ext = path.extname(file)
+        const ext = path.extname(file);
         if (!order.includes(ext)) {
-          continue
+          continue;
         }
-        const target = hasExtension ? fileName : fileName + ext
+        const target = hasExtension ? fileName : fileName + ext;
         if (file === target) {
-          const index = order.indexOf(ext)
+          const index = order.indexOf(ext);
           if (index !== -1 && index < findOrder) {
-            findOrder = index
+            findOrder = index;
           }
         }
       }
@@ -60,26 +60,27 @@ export function resolvePath(
         resolve(
           normalize(
             rootPath,
-            hasExtension ? filePath : filePath + order[findOrder]
-          )
-        )
+            hasExtension ? filePath : filePath + order[findOrder],
+          ),
+        );
       } else {
         reject(
-          `can not find file path ${normalize(
-            rootPath,
-            filePath + order[findOrder]
-          )}`
-        )
+          `can not find file path ${
+            normalize(
+              rootPath,
+              filePath + order[findOrder],
+            )
+          }`,
+        );
       }
-    })
-  })
+    });
+  });
 }
 
 /**
- *
  * @param filePath convert relative path to absolute path starting with / (for browser)
  * @returns normalized path
  */
 export function normalize(basePath: string, filePath: string): string {
-  return '/' + path.relative(basePath, filePath).split(path.sep).join('/')
+  return "/" + path.relative(basePath, filePath).split(path.sep).join("/");
 }

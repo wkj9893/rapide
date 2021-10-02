@@ -1,5 +1,5 @@
-import { scanHtml } from '../src/server/utils/html'
-import { assertEqual } from 'afz'
+import { scanHtml } from "../src/server/utils/html";
+import { assertEqual } from "afz";
 
 assertEqual(
   scanHtml(`<!DOCTYPE html>
@@ -16,13 +16,13 @@ assertEqual(
     </body>
   </html>`),
   [
-    { start: 183, str: 'https://reactjs.org/favicon.ico' },
+    { start: 183, str: "https://reactjs.org/favicon.ico" },
     {
       start: 333,
-      str: 'src/index.tsx'
-    }
-  ]
-)
+      str: "src/index.tsx",
+    },
+  ],
+);
 
 assertEqual(
   scanHtml(`<!doctype html>
@@ -71,5 +71,5 @@ assertEqual(
 </div>
 </body>
 </html>`),
-  []
-)
+  [],
+);

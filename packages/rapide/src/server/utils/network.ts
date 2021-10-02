@@ -1,18 +1,18 @@
-import os = require('os')
+import os = require("os");
 
 export function getNetworkAddress(): string {
-  const interfaces = os.networkInterfaces()
+  const interfaces = os.networkInterfaces();
   for (const name of Object.keys(interfaces)) {
-    const i = interfaces[name]
+    const i = interfaces[name];
     if (!i) {
-      continue
+      continue;
     } else {
       for (const { address, family, internal } of i) {
-        if (family === 'IPv4' && !internal) {
-          return address
+        if (family === "IPv4" && !internal) {
+          return address;
         }
       }
     }
   }
-  return ''
+  return "";
 }

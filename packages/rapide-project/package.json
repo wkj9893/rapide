@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "rapide",
-    "build": "rapide build"
+    "build": "rapide build",
+    "serve": "rapide serve"
   },
   "dependencies": {
     "@emotion/react": "^11.4.1",
@@ -15,7 +16,7 @@
   "devDependencies": {
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.9",
-    "rapide": "workspace:^0.2.6",
+    "rapide": "workspace:^0.3.0",
     "rapide-react": "workspace:^0.0.1",
     "typescript": "^4.4.2"
   },

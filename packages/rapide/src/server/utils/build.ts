@@ -1,14 +1,14 @@
-import esbuild = require('esbuild')
-import preBundlePlugin from '../plugins/preBundle'
-import { readFile, rm } from 'fs/promises'
-import path = require('path')
-import { cachePath, rootPath } from '..'
-import { findHtml, transformHtml } from './html'
-import { writeFileString } from './file'
+import esbuild = require("esbuild");
+import preBundlePlugin from "../plugins/preBundle";
+import { readFile, rm } from "fs/promises";
+import path = require("path");
+import { cachePath, rootPath } from "..";
+import { findHtml, transformHtml } from "./html";
+import { writeFileString } from "./file";
 
 export async function buildFiles(entryPoints: string[]) {
   if (entryPoints.length < 1) {
-    return
+    return;
   }
   try {
     await esbuild.build({
@@ -16,39 +16,52 @@ export async function buildFiles(entryPoints: string[]) {
       bundle: true,
       splitting: true,
       sourcemap: true,
-      format: 'esm',
-      outdir: path.resolve(cachePath, 'node_modules'),
-      outbase: 'node_modules',
-      plugins: [preBundlePlugin]
-    })
+      format: "esm",
+      outdir: path.resolve(cachePath, "node_modules"),
+      outbase: "node_modules",
+      plugins: [preBundlePlugin],
+    });
   } catch (err) {
-    console.log(err)
-    process.exit(1)
+    console.log(err);
+    process.exit(1);
   }
 }
 
 export async function build() {
-  const outdir = path.resolve(rootPath, 'build')
-  await rm(outdir, { recursive: true, force: true })
+  const map: Map<string, string[]> = new Map();
+  const outdir = path.resolve(rootPath, "build");
+  await rm(outdir, { recursive: true, force: true });
 
-  const htmlPaths = findHtml(rootPath)
-  const entryPoints = []
+  const htmlPaths = findHtml(rootPath);
+  const entryPoints = [];
   for (const htmlPath of htmlPaths) {
-    const html = await readFile(htmlPath, 'utf-8')
-    const { result, files } = transformHtml(html)
+    const html = await readFile(htmlPath, "utf-8");
+    const { result, files } = transformHtml(html);
     await writeFileString(
-      path.resolve(rootPath, 'build', path.relative(rootPath, htmlPath)),
-      result
-    )
-    entryPoints.push(...files)
+      path.resolve(rootPath, "build", path.relative(rootPath, htmlPath)),
+      result,
+    );
+    entryPoints.push(...files);
+    map.set(htmlPath, files);
   }
   await esbuild.build({
     entryPoints,
     bundle: true,
     splitting: true,
-    format: 'esm',
+    format: "esm",
     minify: true,
     outdir,
-    outbase: rootPath
-  })
+    outbase: rootPath,
+  });
+  // for (const [key, value] of map) {
+  //   for (const v of value) {
+  //     const cssPath = path.resolve(
+  //       rootPath,
+  //       'build',
+  //       path.relative(rootPath, v)
+  //     )
+  //     if (fs.existsSync(path.resolve(rootPath, 'build', ''))) {
+  //     }
+  //   }
+  // }
 }

@@ -1,23 +1,23 @@
-import { transform } from 'esbuild'
+import { transform } from "esbuild";
 
 export type Loader =
-  | 'js'
-  | 'jsx'
-  | 'ts'
-  | 'tsx'
-  | 'css'
-  | 'json'
-  | 'text'
-  | 'base64'
-  | 'file'
-  | 'dataurl'
-  | 'binary'
-  | 'default'
+  | "js"
+  | "jsx"
+  | "ts"
+  | "tsx"
+  | "css"
+  | "json"
+  | "text"
+  | "base64"
+  | "file"
+  | "dataurl"
+  | "binary"
+  | "default";
 
 export async function esbuildTransform(code: string, loader: Loader) {
   return await transform(code, {
-    format: 'esm',
+    format: "esm",
     loader,
-    sourcemap: true
-  })
+    sourcemap: true,
+  });
 }

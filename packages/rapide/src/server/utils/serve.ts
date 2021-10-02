@@ -1,39 +1,50 @@
-import http = require('http')
-import path = require('path')
-import { readFile } from 'fs/promises'
-import { getContentType, getNetworkAddress, lightBlue } from '..'
+import http = require("http");
+import path = require("path");
+import { readFile } from "fs/promises";
+import { getContentType, getNetworkAddress, lightBlue } from "..";
 
 //  a static file server for build output
 export function serve(rootPath: string) {
   http
     .createServer(async (req, res) => {
-      let { url } = req
+      let { url } = req;
       if (!url) {
-        return
+        return res.writeHead(404).end();
       }
-      if (url === '/') {
-        url += 'index.html'
+      //  for url end with /,for example rootPath,we add index.html to it
+      if (url.endsWith("/")) {
+        url = url.slice(1) + "index.html";
+      } //  for path without extension resolve to html
+      else if (!path.extname(url)) {
+        url = url.slice(1) + ".html";
+      } else {
+        url = url.slice(1);
       }
-      let filePath = path.resolve(rootPath, url?.slice(1))
-      if (!path.extname(filePath)) {
-        filePath += '.html'
-      }
+      const filePath = path.resolve(rootPath, url);
       try {
+        const data = await readFile(filePath);
         return res
           .writeHead(200, {
-            'Content-Type': getContentType(path.extname(filePath))
+            "Content-Length": Buffer.byteLength(data),
+            "Content-Type": getContentType(path.extname(filePath)),
           })
-          .end(await readFile(filePath))
+          .end(data);
       } catch (err) {
         if (err instanceof Error) {
-          return res.writeHead(404).end(err.message)
+          const { message } = err;
+          return res
+            .writeHead(404, {
+              "Content-Length": Buffer.byteLength(message),
+              "Content-Type": "text/plain",
+            })
+            .end(message);
         }
       }
     })
-    .listen(5000)
-  console.log('  > Local:    ' + lightBlue(`http://localhost:5000\n`))
-  const address = getNetworkAddress()
+    .listen(5000);
+  console.log("  > Local:    " + lightBlue(`http://localhost:5000\n`));
+  const address = getNetworkAddress();
   if (address) {
-    console.log('  > Network:  ' + lightBlue(`http://${address}:5000`))
+    console.log("  > Network:  " + lightBlue(`http://${address}:5000`));
   }
 }
