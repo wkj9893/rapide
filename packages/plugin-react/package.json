@@ -1,13 +1,11 @@
 {
   "name": "rapide-react",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "react plugin for rapide",
   "main": "index.js",
-  "files": [
-    "index.js"
-  ],
   "scripts": {
-    "build": "esbuild index.ts --platform=node --format=cjs --outfile=index.js"
+    "fmt": "deno fmt index.js",
+    "lint": "deno lint index.js"
   },
   "author": "wkj",
   "license": "MIT",
