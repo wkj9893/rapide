@@ -1,7 +1,7 @@
 import { scanHtml } from "../src/server/utils/html";
-import { assertEqual } from "afz";
+import assert from "assert/strict";
 
-assertEqual(
+assert.deepEqual(
   scanHtml(`<!DOCTYPE html>
   <html lang="en">
     <head>
@@ -24,7 +24,7 @@ assertEqual(
   ],
 );
 
-assertEqual(
+assert.deepEqual(
   scanHtml(`<!doctype html>
 <html>
 <head>

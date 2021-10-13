@@ -10,12 +10,14 @@ const filter = new RegExp(
 
 const preBundlePlugin = {
   name: "pre-bundle",
-  setup(build: {
-    onResolve: (
-      arg0: { filter: RegExp },
-      arg1: (args: OnResolveArgs) => { path: string; external: boolean },
-    ) => void;
-  }) {
+  setup(
+    build: {
+      onResolve: (
+        arg0: { filter: RegExp },
+        arg1: (args: OnResolveArgs) => { path: string; external: boolean },
+      ) => void;
+    },
+  ) {
     build.onResolve({ filter }, (args: OnResolveArgs) => {
       return { path: args.path, external: true };
     });
