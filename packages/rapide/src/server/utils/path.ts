@@ -1,7 +1,8 @@
 import fs = require("fs");
 import path = require("path");
 
-export const rootPath = resolveRoot();
+const rootPath = resolveRoot();
+const cachePath = path.resolve(__dirname, "cache");
 
 /**
  * get project root directory absolute path
@@ -29,7 +30,7 @@ function resolveRoot(): string {
  * @param order resolution extension order
  * @returns empty string if unfound else exact filename
  */
-export function resolvePath(
+function resolvePath(
   filePath: string,
   order = [".tsx", ".ts", ".jsx", ".js", ".css", ".json"],
 ): Promise<string> {
@@ -81,6 +82,8 @@ export function resolvePath(
  * @param filePath convert relative path to absolute path starting with / (for browser)
  * @returns normalized path
  */
-export function normalize(basePath: string, filePath: string): string {
+function normalize(basePath: string, filePath: string): string {
   return "/" + path.relative(basePath, filePath).split(path.sep).join("/");
 }
+
+export { cachePath, normalize, resolvePath, rootPath };

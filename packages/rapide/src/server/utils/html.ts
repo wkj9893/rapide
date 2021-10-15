@@ -1,6 +1,6 @@
 import path = require("path");
 import fs = require("fs");
-import { rootPath } from "..";
+import { rootPath } from "./path";
 
 interface ImportSpecifier {
   start: number;

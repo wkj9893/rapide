@@ -1,7 +1,9 @@
 import http = require("http");
 import path = require("path");
 import { readFile } from "fs/promises";
-import { getContentType, getNetworkAddress, lightBlue } from "..";
+import { lightBlue } from "./color";
+import { getContentType } from "..";
+import { address } from "./network";
 
 //  a static file server for build output
 export function serve(rootPath: string) {
@@ -43,7 +45,6 @@ export function serve(rootPath: string) {
     })
     .listen(5000);
   console.log("  > Local:    " + lightBlue(`http://localhost:5000\n`));
-  const address = getNetworkAddress();
   if (address) {
     console.log("  > Network:  " + lightBlue(`http://${address}:5000`));
   }

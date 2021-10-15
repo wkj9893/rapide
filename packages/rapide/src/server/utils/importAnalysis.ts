@@ -2,7 +2,7 @@ import { normalize, resolvePath } from "./path";
 import path = require("path");
 import { init, parse } from "es-module-lexer";
 import { getMetaData, Metadata, preBuild } from "../preCreateServer";
-import { cachePath } from "..";
+import { cachePath } from "./path";
 
 export default async function importAnalysis(
   code: string,

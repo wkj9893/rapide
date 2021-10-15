@@ -1,5 +1,5 @@
 import { Loader } from "./utils/transform";
-import { normalize, rootPath } from "./utils/path";
+import { cachePath, normalize, rootPath } from "./utils/path";
 import { createHttpServer } from "./server";
 import path = require("path");
 import { createWatcher } from "./watcher";
@@ -8,10 +8,8 @@ import WebSocket = require("ws");
 import { createWebsocketServer } from "./wss";
 import { FSWatcher } from "chokidar";
 import { Metadata, preCreateServer } from "./preCreateServer";
-import { cyan, lightBlue } from "./utils/color";
 import { build } from "./utils/build";
 import { serve } from "./utils/serve";
-import { getNetworkAddress } from "./utils/network";
 
 type HMRMessage = ConnectedMessage | ReloadMessage | UpdateMessage;
 
@@ -41,40 +39,39 @@ interface RapideServer {
   watcher: FSWatcher;
 }
 
-const MEDIA_TYPES = new Map([
-  [".md", "text/markdown"],
-  [".html", "text/html"],
-  [".htm", "text/html"],
-  [".json", "application/json"],
-  [".map", "application/json"],
-  [".txt", "text/plain"],
-  [".ts", "application/javascript"],
-  [".tsx", "application/javascript"],
-  [".js", "application/javascript"],
-  [".jsx", "application/javascript"],
-  [".gz", "application/gzip"],
-  [".css", "application/javascript"],
-  [".wasm", "application/wasm"],
-  [".mjs", "application/javascript"],
-  [".svg", "image/svg+xml"],
-]);
+const MEDIA_TYPES: Record<string, string> = {
+  ".md": "text/markdown",
+  ".html": "text/html",
+  ".htm": "text/html",
+  ".json": "application/json",
+  ".map": "application/json",
+  ".txt": "text/plain",
+  ".ts": "application/javascript",
+  ".tsx": "application/javascript",
+  ".js": "application/javascript",
+  ".jsx": "application/javascript",
+  ".gz": "application/gzip",
+  ".css": "application/javascript",
+  ".wasm": "application/wasm",
+  ".mjs": "application/javascript",
+  ".svg": "image/svg+xml",
+};
 
-const loaderMap: Map<string, Loader> = new Map([
-  [".js", "js"],
-  [".jsx", "jsx"],
-  [".ts", "ts"],
-  [".tsx", "tsx"],
-  [".css", "css"],
-  [".json", "json"],
-]);
+const loaderMap: Record<string, Loader> = {
+  ".js": "js",
+  ".jsx": "jsx",
+  ".ts": "ts",
+  ".tsx": "tsx",
+  ".css": "css",
+  ".json": "json",
+};
 
 const cacheSet: Set<string> = new Set();
 
-const cachePath = path.resolve(__dirname, "cache");
 const metaJsonPath = path.resolve(cachePath, "metadata.json");
 
 function getContentType(ext: string): string {
-  const contentType = MEDIA_TYPES.get(ext) ?? "text/plain";
+  const contentType = MEDIA_TYPES[ext] ?? "text/plain";
   if (contentType.startsWith("text")) {
     return contentType + ";charset=UTF-8";
   }
@@ -86,7 +83,6 @@ async function createServer(config: RapideConfig): Promise<RapideServer> {
   const wss = createWebsocketServer(httpServer);
   const watcher = createWatcher(rootPath);
   const send = (data: HMRMessage) => {
-    //  TODO: @types/ws
     wss.clients.forEach(
       (client: { readyState: number; send: (arg0: string) => void }) => {
         if (client.readyState === WebSocket.OPEN) {
@@ -115,17 +111,12 @@ async function createServer(config: RapideConfig): Promise<RapideServer> {
 
 export {
   build,
-  cachePath,
   cacheSet,
   createServer,
-  cyan,
   getContentType,
-  getNetworkAddress,
-  lightBlue,
   loaderMap,
   metaJsonPath,
   preCreateServer,
-  rootPath,
   serve,
 };
 

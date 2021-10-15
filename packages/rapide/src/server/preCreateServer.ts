@@ -4,7 +4,8 @@ import fs = require("fs");
 import { writeFile } from "fs/promises";
 import { buildFiles } from "./utils/build";
 import getExports from "./utils/exports";
-import { cachePath, metaJsonPath, RapideConfig, rootPath } from ".";
+import { cachePath, rootPath } from "./utils/path";
+import { metaJsonPath, RapideConfig } from ".";
 
 export interface Metadata {
   version?: string;

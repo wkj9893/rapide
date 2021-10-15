@@ -1,18 +1,11 @@
 import http = require("http");
 import path = require("path");
-import fs = require("fs");
 import { readFile } from "fs/promises";
 import importAnalysis from "./utils/importAnalysis";
 import { esbuildTransform } from "./utils/transform";
 import { lightBlue } from "./utils/color";
-import {
-  cachePath,
-  cacheSet,
-  getContentType,
-  loaderMap,
-  RapideConfig,
-  rootPath,
-} from ".";
+import { cachePath, rootPath } from "./utils/path";
+import { cacheSet, getContentType, loaderMap, RapideConfig } from ".";
 
 export async function transform(
   code: string,
@@ -43,7 +36,7 @@ updateStyle(id,css);`;
       '<script type="module" src="/node_modules/rapide/client.js"></script>';
   }
 
-  const loader = loaderMap.get(ext);
+  const loader = loaderMap[ext];
   if (loader && !shouldSkip) {
     code = (await esbuildTransform(code, loader)).code;
   }
@@ -101,8 +94,8 @@ export async function createHttpServer(config: RapideConfig) {
       return res.writeHead(304).end();
     }
 
-    //  node_modules cache files or client code
-    if (fs.existsSync(cacheFilePath)) {
+    //  node_modules files or client code
+    try {
       const content = await readFile(cacheFilePath);
       cacheSet.add(filePath);
       return res
@@ -113,7 +106,10 @@ export async function createHttpServer(config: RapideConfig) {
           ETag: `"${Date.now()}"`,
         })
         .end(content);
+    } catch (_err) {
+      //  user files
     }
+
     try {
       let code = await readFile(filePath, "utf-8");
       code = await transform(code, filePath, config);

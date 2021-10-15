@@ -1,8 +1,7 @@
 import esbuild = require("esbuild");
-import preBundlePlugin from "../plugins/preBundle";
 import { readFile, rm } from "fs/promises";
 import path = require("path");
-import { cachePath, rootPath } from "..";
+import { cachePath, rootPath } from "./path";
 import { findHtml, transformHtml } from "./html";
 import { writeFileString } from "./file";
 
@@ -10,21 +9,17 @@ export async function buildFiles(entryPoints: string[]) {
   if (entryPoints.length < 1) {
     return;
   }
-  try {
-    await esbuild.build({
-      entryPoints,
-      bundle: true,
-      splitting: true,
-      sourcemap: true,
-      format: "esm",
-      outdir: path.resolve(cachePath, "node_modules"),
-      outbase: "node_modules",
-      plugins: [preBundlePlugin],
-    });
-  } catch (err) {
-    console.log(err);
-    process.exit(1);
-  }
+
+  await esbuild.build({
+    entryPoints,
+    bundle: true,
+    splitting: true,
+    sourcemap: true,
+    platform: "browser",
+    format: "esm",
+    outdir: path.resolve(cachePath, "node_modules"),
+    outbase: "node_modules",
+  });
 }
 
 export async function build() {
@@ -48,20 +43,10 @@ export async function build() {
     entryPoints,
     bundle: true,
     splitting: true,
+    platform: "browser",
     format: "esm",
     minify: true,
     outdir,
     outbase: rootPath,
   });
-  // for (const [key, value] of map) {
-  //   for (const v of value) {
-  //     const cssPath = path.resolve(
-  //       rootPath,
-  //       'build',
-  //       path.relative(rootPath, v)
-  //     )
-  //     if (fs.existsSync(path.resolve(rootPath, 'build', ''))) {
-  //     }
-  //   }
-  // }
 }

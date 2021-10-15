@@ -1,17 +1,11 @@
 #!/usr/bin/env node
-import {
-  build,
-  createServer,
-  cyan,
-  getNetworkAddress,
-  lightBlue,
-  preCreateServer,
-  rootPath,
-  serve,
-} from "./server";
+import { build, createServer, preCreateServer, serve } from "./server";
+import { rootPath } from "./server/utils/path";
 import { version } from "../package.json";
 import { performance } from "perf_hooks";
 import path = require("path");
+import { cyan, lightBlue } from "./server/utils/color";
+import { address } from "./server/utils/network";
 
 const args = process.argv.slice(2);
 
@@ -22,7 +16,6 @@ async function main() {
     const server = await createServer(config);
     console.log(cyan(`\n  rapide ${version}`) + " dev server running at:\n");
     console.log("  > Local: " + lightBlue(`http://localhost:${server.port}\n`));
-    const address = getNetworkAddress();
     if (address) {
       console.log(
         "  > Network: " + lightBlue(`http://${address}:${server.port}`),

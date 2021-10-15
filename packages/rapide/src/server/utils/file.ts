@@ -1,12 +1,12 @@
 import fs = require("fs");
-import { readFile, writeFile } from "fs/promises";
+import { mkdir, readFile, writeFile } from "fs/promises";
 import path = require("path");
-import { rootPath } from "..";
+import { rootPath } from "./path";
 
 export async function writeFileString(filePath: string, data: string) {
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+    await mkdir(dir, { recursive: true });
   }
   await writeFile(filePath, data);
 }

@@ -1,6 +1,6 @@
 import os = require("os");
 
-export function getNetworkAddress(): string {
+function getNetworkAddress(): string {
   const interfaces = os.networkInterfaces();
   for (const name of Object.keys(interfaces)) {
     const i = interfaces[name];
@@ -16,3 +16,5 @@ export function getNetworkAddress(): string {
   }
   return "";
 }
+
+export const address = getNetworkAddress();

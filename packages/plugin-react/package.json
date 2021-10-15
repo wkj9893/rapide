@@ -10,11 +10,11 @@
   "author": "wkj",
   "license": "MIT",
   "dependencies": {
-    "@babel/core": "^7.15.5",
+    "@babel/core": "^7.15.8",
     "@babel/plugin-transform-react-jsx": "^7.14.9",
     "react-refresh": "^0.10.0"
   },
   "devDependencies": {
-    "esbuild": "^0.13.1"
+    "esbuild": "^0.13.6"
   }
 }
