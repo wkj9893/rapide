@@ -3,6 +3,7 @@ import path = require("path");
 import { init, parse } from "es-module-lexer";
 import { getMetaData, Metadata, preBuild } from "../preCreateServer";
 import { cachePath } from "./path";
+import { overwrite } from "./overwrite";
 
 export default async function importAnalysis(
   code: string,
@@ -11,45 +12,32 @@ export default async function importAnalysis(
 ) {
   await init;
   const imports = parse(code)[0].filter((value) => value.n);
-
-  let i = 0;
-  let j = 0;
-  let res = "";
-  while (j < imports.length) {
-    const str = imports[j].n as string;
-    const start = imports[j].s;
-    if (i === start) {
-      if (str.startsWith(".") || str.startsWith("/")) {
-        const fileName = await resolvePath(
-          path.resolve(path.dirname(codePath), str),
-        );
-        res += fileName;
-        i += str.length;
-        j++;
-      } //  handle bare import specifiers, such as import moment from "moment"
-      else {
-        if (!map.get(str)) {
-          const start = performance.now();
-          console.log();
-          console.log("new dependency found:", str, "rebuilding...");
-          map.set(str, getMetaData(str));
-          await preBuild(map);
-          console.log(`done in ${(performance.now() - start).toFixed()}ms`);
-        }
-        res += normalize(cachePath, map.get(str)?.dest as string);
-        i += str.length;
-        j++;
-      }
+  const starts: number[] = [];
+  const ends: number[] = [];
+  const contents: string[] = [];
+  for (const { n, s, e } of imports) {
+    if (!n) {
+      continue;
+    }
+    starts.push(s);
+    ends.push(e);
+    if (n.startsWith(".") || n.startsWith("/")) {
+      contents.push(
+        await resolvePath(
+          path.resolve(path.dirname(codePath), n),
+        ),
+      );
     } else {
-      while (i < start) {
-        res += code[i];
-        i++;
+      if (!map.get(n)) {
+        const start = performance.now();
+        console.log("\nnew dependency found:", n, "rebuilding...");
+        map.set(n, getMetaData(n));
+        await preBuild(map);
+        console.log(`done in ${(performance.now() - start).toFixed()}ms`);
       }
+      contents.push(normalize(cachePath, map.get(n)!.dest));
     }
   }
-  while (i < code.length) {
-    res += code[i];
-    i++;
-  }
+  const res = overwrite(code, starts, ends, contents);
   return res;
 }

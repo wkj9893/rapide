@@ -1,6 +1,7 @@
 import path = require("path");
 import fs = require("fs");
 import { rootPath } from "./path";
+import { overwrite } from "./overwrite";
 
 interface ImportSpecifier {
   start: number;
@@ -86,47 +87,34 @@ export function scanHtml(html: string): ImportSpecifier[] {
 }
 
 export function transformHtml(html: string): {
-  result: string;
-  files: string[];
+  html: string;
+  filePaths: string[];
 } {
-  let i = 0;
-  let j = 0;
-  let result = "";
-  const files: string[] = [];
+  const filePaths: string[] = [];
   const imports = scanHtml(html);
-
-  while (j < imports.length) {
-    const { start, str } = imports[j];
-    if (i === start) {
-      const filePath = path.join(rootPath, str);
-      i += str.length;
-      j++;
-      if (fs.existsSync(filePath)) {
-        files.push(filePath);
-        const ext = path.extname(filePath);
-        if (ext === ".ts" || ext === ".tsx" || ext === ".jsx") {
-          result += path.relative(
-            rootPath,
-            filePath.slice(0, filePath.length - ext.length) + ".js",
-          );
-        } else {
-          result += path.relative(rootPath, filePath);
-        }
-      } else {
-        result += str;
-      }
+  const starts = [];
+  const ends = [];
+  const contents = [];
+  for (const { str, start } of imports) {
+    const src = path.join(rootPath, str);
+    const ext = path.extname(src);
+    if (ext === ".ts" || ext === ".tsx" || ext === ".js" || ext === ".jsx") {
+      starts.push(start);
+      ends.push(start + str.length);
+      contents.push("");
+      filePaths.push(src);
     } else {
-      while (i < start) {
-        result += html[i];
-        i++;
-      }
+      const dest = path.join(rootPath, "build", str);
+      fs.cpSync(src, dest, {
+        recursive: true,
+      });
+      starts.push(start);
+      ends.push(start + str.length);
+      contents.push(path.join("build", str));
     }
   }
-  while (i < html.length) {
-    result += html[i];
-    i++;
-  }
-  return { result, files };
+  html = overwrite(html, starts, ends, contents);
+  return { html, filePaths };
 }
 
 export function findHtml(dir: string): string[] {
