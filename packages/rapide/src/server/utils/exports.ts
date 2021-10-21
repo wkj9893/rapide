@@ -14,7 +14,7 @@ export default async function getExports(modulePath: string) {
       const result = parse(await readFile(currentPath, "utf-8"));
       exports.push(...result.exports);
       for (const reexport of result.reexports) {
-        paths.push(path.resolve(path.dirname(currentPath), reexport));
+        paths.push(path.join(path.dirname(currentPath), reexport));
       }
     }
   } catch (err) {

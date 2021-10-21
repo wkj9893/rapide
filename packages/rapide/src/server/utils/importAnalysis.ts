@@ -24,7 +24,7 @@ export default async function importAnalysis(
     if (n.startsWith(".") || n.startsWith("/")) {
       contents.push(
         await resolvePath(
-          path.resolve(path.dirname(codePath), n),
+          path.join(path.dirname(codePath), n),
         ),
       );
     } else {

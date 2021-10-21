@@ -12,10 +12,10 @@ export async function writeFileString(filePath: string, data: string) {
 }
 
 export async function writeBuildFile(filePath: string) {
-  const buildPath = path.resolve(rootPath, "build");
+  const buildPath = path.join(rootPath, "build");
   const data = await readFile(filePath, "utf-8");
   await writeFile(
-    path.resolve(buildPath, path.relative(rootPath, filePath)),
+    path.join(buildPath, path.relative(rootPath, filePath)),
     data,
   );
 }

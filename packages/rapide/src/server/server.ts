@@ -61,7 +61,7 @@ export async function createHttpServer(config: RapideConfig) {
     const { pathname, search } = new URL(url, `http://${req.headers.host}`);
     // handle /index.css?t=1628048939939
     if (search && pathNames.has(pathname)) {
-      const codePath = path.resolve(rootPath, pathname.slice(1));
+      const codePath = path.join(rootPath, pathname.slice(1));
       let code = await readFile(codePath, "utf-8");
       code = await transform(code, codePath, config);
       return res
@@ -85,10 +85,10 @@ export async function createHttpServer(config: RapideConfig) {
       url = url.slice(1);
     }
     const ext = path.extname(url);
-    const filePath = path.resolve(rootPath, url);
+    const filePath = path.join(rootPath, url);
     const cacheFilePath = url === "/node_modules/rapide/client.js"
-      ? path.resolve(__dirname, "client.js")
-      : path.resolve(cachePath, url);
+      ? path.join(__dirname, "client.js")
+      : path.join(cachePath, url);
 
     if (cacheSet.has(filePath) && req.headers["if-none-match"]) {
       return res.writeHead(304).end();

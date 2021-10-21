@@ -68,7 +68,7 @@ const loaderMap: Record<string, Loader> = {
 
 const cacheSet: Set<string> = new Set();
 
-const metaJsonPath = path.resolve(cachePath, "metadata.json");
+const metaJsonPath = path.join(cachePath, "metadata.json");
 
 function getContentType(ext: string): string {
   const contentType = MEDIA_TYPES[ext] ?? "text/plain";

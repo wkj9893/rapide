@@ -2,7 +2,7 @@ import fs = require("fs");
 import path = require("path");
 
 const rootPath = resolveRoot();
-const cachePath = path.resolve(__dirname, "cache");
+const cachePath = path.join(__dirname, "cache");
 
 /**
  * get project root directory absolute path
@@ -12,7 +12,7 @@ function resolveRoot(): string {
   let rootDir = process.cwd();
   let prev = "";
   while (true) {
-    if (fs.existsSync(path.resolve(rootDir, "package.json"))) {
+    if (fs.existsSync(path.join(rootDir, "package.json"))) {
       return rootDir;
     }
     if (prev === rootDir) {

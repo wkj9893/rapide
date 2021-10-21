@@ -31,7 +31,7 @@ async function main() {
     return;
   }
   if (args[0] === "serve") {
-    const p = args[1] ? args[1] : path.resolve(rootPath, "build");
+    const p = args[1] ? args[1] : path.join(rootPath, "build");
     serve(p);
     return;
   }

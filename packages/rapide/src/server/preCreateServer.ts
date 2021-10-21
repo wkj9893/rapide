@@ -27,7 +27,7 @@ export async function preCreateServer(port = 3000): Promise<RapideConfig> {
   if (!fs.existsSync(cachePath)) {
     fs.mkdirSync(cachePath, { recursive: true });
   }
-  const packageJsonPath = path.resolve(rootPath, "package.json");
+  const packageJsonPath = path.join(rootPath, "package.json");
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
     const rapideConfig = packageJson.rapide ?? {};
@@ -46,7 +46,7 @@ export async function preCreateServer(port = 3000): Promise<RapideConfig> {
         shouldBuild = true;
         map.set(dep, getMetaData(dep));
       } else {
-        const p = path.resolve(rootPath, "node_modules", dep, "package.json");
+        const p = path.join(rootPath, "node_modules", dep, "package.json");
         if (JSON.parse(fs.readFileSync(p, "utf-8")).version !== data.version) {
           map.set(dep, getMetaData(dep));
           shouldBuild = true;
@@ -76,22 +76,22 @@ export async function preCreateServer(port = 3000): Promise<RapideConfig> {
 }
 
 export function getMetaData(dep: string): Metadata {
-  const p = path.resolve(rootPath, "node_modules", dep, "package.json");
+  const p = path.join(rootPath, "node_modules", dep, "package.json");
   if (!fs.existsSync(p)) {
-    let src = path.resolve(rootPath, "node_modules", dep);
-    let dest = path.resolve(cachePath, "node_modules", dep);
-    if (fs.existsSync(path.resolve(rootPath, "node_modules", dep))) {
+    let src = path.join(rootPath, "node_modules", dep);
+    let dest = path.join(cachePath, "node_modules", dep);
+    if (fs.existsSync(path.join(rootPath, "node_modules", dep))) {
       dest += ".js";
     } else if (
-      fs.existsSync(path.resolve(rootPath, "node_modules", dep) + ".js")
+      fs.existsSync(path.join(rootPath, "node_modules", dep) + ".js")
     ) {
       src += ".js";
       dest += ".js.js";
     } else if (
-      fs.existsSync(path.resolve(rootPath, "node_modules", dep, "index.js"))
+      fs.existsSync(path.join(rootPath, "node_modules", dep, "index.js"))
     ) {
-      src = path.resolve(src, "index.js");
-      dest = path.resolve(dest, "index.js.js");
+      src = path.join(src, "index.js");
+      dest = path.join(dest, "index.js.js");
     } else {
       console.error(`can not resolve ${dep}`);
       process.exit(1);
@@ -105,8 +105,8 @@ export function getMetaData(dep: string): Metadata {
   const packageJson = JSON.parse(fs.readFileSync(p, "utf8"));
   const { version } = packageJson;
   const main = packageJson.module ?? packageJson.main ?? "index.js";
-  const src = path.resolve(rootPath, "node_modules", dep, main);
-  let dest = path.resolve(cachePath, "node_modules", dep, main);
+  const src = path.join(rootPath, "node_modules", dep, main);
+  let dest = path.join(cachePath, "node_modules", dep, main);
   const format = packageJson.module ? "esm" : "cjs";
   if (format === "cjs") {
     dest += ".js";

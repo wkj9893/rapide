@@ -16,10 +16,10 @@
   ],
   "repository": "https://github.com/wkj9893/rapide",
   "dependencies": {
-    "esbuild": "^0.13.6"
+    "esbuild": "^0.13.8"
   },
   "devDependencies": {
-    "@types/node": "^16.11.0",
+    "@types/node": "^16.11.1",
     "@types/ws": "^8.2.0",
     "chokidar": "^3.5.2",
     "cjs-module-lexer": "^1.2.2",

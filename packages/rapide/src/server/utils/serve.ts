@@ -22,7 +22,7 @@ export function serve(rootPath: string) {
       } else {
         url = url.slice(1);
       }
-      const filePath = path.resolve(rootPath, url);
+      const filePath = path.join(rootPath, url);
       try {
         const data = await readFile(filePath);
         return res
