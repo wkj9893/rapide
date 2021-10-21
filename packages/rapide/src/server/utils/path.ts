@@ -86,4 +86,12 @@ function normalize(basePath: string, filePath: string): string {
   return "/" + path.relative(basePath, filePath).split(path.sep).join("/");
 }
 
-export { cachePath, normalize, resolvePath, rootPath };
+//  resolve html url(script src or link href)
+function resolveUrl(htmlPath: string, str: string) {
+  if (str.startsWith("/")) {
+    return path.join(rootPath, str);
+  }
+  return path.join(path.dirname(htmlPath), str);
+}
+
+export { cachePath, normalize, resolvePath, resolveUrl, rootPath };

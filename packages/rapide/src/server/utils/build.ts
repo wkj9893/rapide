@@ -2,8 +2,7 @@ import esbuild = require("esbuild");
 import { readFile, rm } from "fs/promises";
 import path = require("path");
 import { cachePath, rootPath } from "./path";
-import { findHtml, transformHtml } from "./html";
-import { writeFileString } from "./file";
+import { findEntryPoints, findHtml, writeHtml } from "./html";
 
 export async function buildFiles(entryPoints: string[]) {
   if (entryPoints.length < 1) {
@@ -23,35 +22,19 @@ export async function buildFiles(entryPoints: string[]) {
 }
 
 export async function build() {
-  //  input file -> html
-  const map: Map<string, string> = new Map();
-  //  html -> output file
-  const htmlMap: Map<string, Set<string>> = new Map();
-  //  html -> css
-  const htmlCssMap: Map<string, Set<string>> = new Map();
-
-  const outdir = path.join(rootPath, "build");
-  await rm(outdir, { recursive: true, force: true });
+  await rm(path.join(rootPath, "build"), { recursive: true, force: true });
 
   const htmlPaths = findHtml(rootPath);
+  const htmls = [];
   const entryPoints = [];
+
   for (const htmlPath of htmlPaths) {
-    htmlMap.set(htmlPath, new Set());
-    htmlCssMap.set(htmlPath, new Set());
-    const { html, filePaths } = transformHtml(
-      await readFile(htmlPath, "utf-8"),
+    const html = await readFile(htmlPath, "utf-8");
+    htmls.push(html);
+    entryPoints.push(
+      ...findEntryPoints(htmlPath, html),
     );
-
-    await writeFileString(
-      path.join(rootPath, "build", path.relative(rootPath, htmlPath)),
-      html,
-    );
-    for (const filePath of filePaths) {
-      entryPoints.push(filePath);
-      map.set(filePath, htmlPath);
-    }
   }
-
   const res = await esbuild.build({
     entryPoints,
     entryNames: "[dir]/[name]-[hash]",
@@ -60,53 +43,60 @@ export async function build() {
     platform: "browser",
     format: "esm",
     minify: true,
-    outdir,
+    outdir: path.join(rootPath, "build"),
     outbase: rootPath,
     metafile: true,
   });
-  const { metafile } = res;
-  if (metafile) {
-    const arr = [];
-    const { outputs } = metafile;
-
-    for (const i in outputs) {
-      if (i.endsWith("css")) {
-        arr.push(i);
-        continue;
-      }
-      const { entryPoint, inputs } = outputs[i];
-      if (!entryPoint) {
-        continue;
-      }
-      const htmlPath = map.get(path.join(rootPath, entryPoint));
-      if (!htmlPath) {
-        continue;
-      }
-      htmlMap.get(htmlPath)?.add(i);
-
-      for (const j in inputs) {
-        if (j.endsWith(".css")) {
-          htmlCssMap.get(htmlPath)?.add(j);
-        }
-      }
+  if (!res.metafile) {
+    return;
+  }
+  //  entryPoint(ts,tsx,js,jsx) -> ouput js
+  const jsMap: Map<string, string> = new Map();
+  //  entryPoint(ts,tsx,js,jsx) -> ouput css
+  const cssMap: Map<string, string> = new Map();
+  //  entryPoint(ts,tsx,js,jsx) -> input css
+  const tempMap: Map<string, Set<string>> = new Map();
+  const { outputs } = res.metafile;
+  //  first handle output js
+  for (const i in outputs) {
+    if (!i.endsWith(".js")) {
+      continue;
     }
-    for (const i of arr) {
-      const { inputs } = outputs[i];
-      const cssSet: Set<string> = new Set();
-      for (const j in inputs) {
-        cssSet.add(j);
-      }
-      for (const [key, value] of htmlCssMap) {
-        if (equal(value, cssSet)) {
-          htmlMap.get(key)?.add(i);
+    const { entryPoint, inputs } = outputs[i];
+    if (!entryPoint) {
+      continue;
+    }
+    jsMap.set(path.join(rootPath, entryPoint), i.slice(5));
+    for (const j in inputs) {
+      if (j.endsWith(".css")) {
+        if (!tempMap.get(entryPoint)) {
+          tempMap.set(entryPoint, new Set());
         }
+        tempMap.get(entryPoint)?.add(j);
       }
     }
   }
-  console.log(htmlMap);
-  // for (const [key, value] of htmlMap) {
-
-  // }
+  // then handle output css
+  for (const i in outputs) {
+    if (!i.endsWith(".css")) {
+      continue;
+    }
+    const set: Set<string> = new Set();
+    const { inputs } = outputs[i];
+    for (const j in inputs) {
+      set.add(j);
+    }
+    for (const [key, value] of tempMap) {
+      if (equal(value, set)) {
+        cssMap.set(path.join(rootPath, key), i.slice(5));
+      }
+    }
+  }
+  const arr = [];
+  for (let i = 0; i < htmlPaths.length; i++) {
+    arr.push(writeHtml(htmlPaths[i], htmls[i], jsMap, cssMap));
+  }
+  await Promise.all(arr);
 }
 
 function equal(s1: Set<string>, s2: Set<string>): boolean {

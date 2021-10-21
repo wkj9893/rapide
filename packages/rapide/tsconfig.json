@@ -4,10 +4,8 @@
     "module": "CommonJS",
     "strict": true,
     "resolveJsonModule": true,
-    "moduleResolution": "Node",
     "isolatedModules": true,
     "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "esModuleInterop": true
+    "noUnusedLocals": true
   }
 }

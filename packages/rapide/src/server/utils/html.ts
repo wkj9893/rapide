@@ -1,19 +1,32 @@
 import path = require("path");
 import fs = require("fs");
-import { rootPath } from "./path";
-import { overwrite } from "./overwrite";
+import { resolveUrl, rootPath } from "./path";
 import { writeFileString } from "./file";
+import { overwrite } from "./overwrite";
 
-interface ImportSpecifier {
-  start: number;
-  str: string;
+interface HtmlInfo {
+  head: number;
+  starts: number[];
+  strs: string[];
 }
 
-function scanHtml(html: string): ImportSpecifier[] {
-  const res: ImportSpecifier[] = [];
+function scanHtml(html: string): HtmlInfo {
   let i = 0;
+  let head = -1;
   let tagClose = false;
+  const starts: number[] = [];
+  const strs: string[] = [];
   while (i < html.length) {
+    if (html.slice(i, i + 6) === "<head>") {
+      i += 6;
+      continue;
+    }
+    //  skip head
+    if (html.slice(i, i + 7) === "</head>") {
+      head = i - 1;
+      i += 7;
+      continue;
+    }
     //  skip html comment
     if (html.slice(i, i + 4) === "<!--") {
       i += 4;
@@ -60,10 +73,17 @@ function scanHtml(html: string): ImportSpecifier[] {
       i += 9;
       continue;
     }
+    if (html[i] === "<") {
+      while (html[i] !== ">") {
+        i++;
+      }
+      i++;
+      continue;
+    }
     i++;
   }
 
-  return res;
+  return { head, starts, strs };
 
   function checkUrl() {
     let str = "";
@@ -74,7 +94,8 @@ function scanHtml(html: string): ImportSpecifier[] {
         str += html[i];
         i++;
       }
-      res.push({ start, str });
+      starts.push(start);
+      strs.push(str);
     } else if (html[i] == `"`) {
       i++;
       const start = i;
@@ -82,7 +103,8 @@ function scanHtml(html: string): ImportSpecifier[] {
         str += html[i];
         i++;
       }
-      res.push({ start, str });
+      starts.push(start);
+      strs.push(str);
     }
   }
 }
@@ -107,46 +129,71 @@ function findHtml(dir: string): string[] {
   }
 }
 
-async function findEntryPoints(
+function findEntryPoints(
   htmlPath: string,
   html: string,
-): Promise<string[]> {
+): string[] {
   const entryPoints: string[] = [];
-  const imports = scanHtml(html);
-  const starts = [];
-  const ends = [];
-  const contents = [];
-  for (const { str, start } of imports) {
-    const src = path.join(rootPath, str);
-    const ext = path.extname(src);
+  const { strs } = scanHtml(html);
+  for (let i = 0; i < strs.length; i++) {
+    const str = strs[i];
+    const ext = path.extname(str);
     if (ext === ".ts" || ext === ".tsx" || ext === ".js" || ext === ".jsx") {
-      entryPoints.push(src);
-    } else {
-      fs.cpSync(src, path.join(rootPath, "build", str), { recursive: true });
-      starts.push(start);
-      ends.push(start + str.length);
-      contents.push(path.join("build", str));
+      entryPoints.push(resolveUrl(htmlPath, str));
     }
   }
-  html = overwrite(html, starts, ends, contents);
-  await writeFileString(
-    path.join(rootPath, "build", path.relative(rootPath, htmlPath)),
-    html,
-  );
   return entryPoints;
 }
 
-export async function eqw(
+async function writeHtml(
   htmlPath: string,
   html: string,
   jsMap: Map<string, string>,
   cssMap: Map<string, string>,
-): Promise<string> {
-  const imports = scanHtml(html);
-  for (const { str, start } of imports) {
-    console.log(str, start);
+): Promise<void> {
+  const { head, starts, strs } = scanHtml(html);
+  const arr1 = [head];
+  const arr2 = [head + 1];
+  const contents = [""];
+  let css = "";
+  for (let i = 0; i < starts.length; i++) {
+    const start = starts[i];
+    const str = strs[i];
+    const filePath = resolveUrl(htmlPath, str);
+    const ext = path.extname(str);
+    if (ext === ".ts" || ext === ".tsx" || ext === ".js" || ext === ".jsx") {
+      if (cssMap.get(filePath)) {
+        css += `\n  <link rel="stylesheet" href="${cssMap.get(filePath)}">  \n`;
+      }
+      arr1.push(start);
+      arr2.push(start + str.length);
+      contents.push(jsMap.get(filePath) as string);
+    } else {
+      await writeFileString(
+        filePath,
+        path.join("buid", path.relative(rootPath, filePath)),
+      );
+    }
   }
-  return html;
+  contents[0] = css;
+  for (let i = 1; i < starts.length; i++) {
+    if (starts[i] < starts[0]) {
+      [starts[i], starts[0], strs[i], strs[0]] = [
+        head,
+        starts[i],
+        strs[0],
+        strs[i],
+      ];
+    } else {
+      break;
+    }
+  }
+  console.log(arr1, arr2, contents);
+  html = overwrite(html, arr1, arr2, contents);
+  await writeFileString(
+    path.join("build", path.relative(rootPath, htmlPath)),
+    html,
+  );
 }
 
-export { findEntryPoints, findHtml, scanHtml };
+export { findEntryPoints, findHtml, scanHtml, writeHtml };
