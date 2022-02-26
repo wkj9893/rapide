@@ -1,5 +1,5 @@
-import path = require("path");
-import fs = require("fs");
+import path from "path"
+import fs from "fs";
 import { resolveUrl, rootPath } from "./path";
 import { writeFileString } from "./file";
 import { overwrite } from "./overwrite";
@@ -188,7 +188,6 @@ async function writeHtml(
       break;
     }
   }
-  console.log(arr1, arr2, contents);
   html = overwrite(html, arr1, arr2, contents);
   await writeFileString(
     path.join("build", path.relative(rootPath, htmlPath)),

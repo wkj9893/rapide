@@ -1,6 +1,6 @@
-import esbuild = require("esbuild");
+import esbuild from "esbuild";
 import { readFile, rm } from "fs/promises";
-import path = require("path");
+import path from "path";
 import { cachePath, rootPath } from "./path";
 import { findEntryPoints, findHtml, writeHtml } from "./html";
 

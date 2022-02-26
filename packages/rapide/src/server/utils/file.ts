@@ -1,6 +1,6 @@
-import fs = require("fs");
+import fs from "fs";
+import path from "path";
 import { mkdir, readFile, writeFile } from "fs/promises";
-import path = require("path");
 import { rootPath } from "./path";
 
 export async function writeFileString(filePath: string, data: string) {

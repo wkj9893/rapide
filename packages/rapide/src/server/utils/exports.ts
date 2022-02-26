@@ -1,6 +1,6 @@
 import { init, parse } from "cjs-module-lexer";
 import { readFile } from "fs/promises";
-import path = require("path");
+import path from "path";
 
 //  https://github.com/evanw/esbuild/issues/442#issuecomment-739340295
 export default async function getExports(modulePath: string) {

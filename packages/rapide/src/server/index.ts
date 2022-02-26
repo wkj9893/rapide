@@ -1,15 +1,15 @@
 import { Loader } from "./utils/transform";
 import { cachePath, normalize, rootPath } from "./utils/path";
 import { createHttpServer } from "./server";
-import path = require("path");
 import { createWatcher } from "./watcher";
 import { Server } from "http";
-import WebSocket = require("ws");
 import { createWebsocketServer } from "./wss";
 import { FSWatcher } from "chokidar";
 import { Metadata, preCreateServer } from "./preCreateServer";
 import { build } from "./utils/build";
 import { serve } from "./utils/serve";
+import path from "path";
+import WebSocket from "ws";
 
 type HMRMessage = ConnectedMessage | ReloadMessage | UpdateMessage;
 
@@ -97,7 +97,6 @@ async function createServer(config: RapideConfig): Promise<RapideServer> {
     const ext = path.extname(filePath);
     // hot reload(jsx,tsx,css)
     if (ext === ".jsx" || ext === ".tsx" || ext === ".css") {
-      performance.now();
       send({
         type: "update",
         update: `${normalize(rootPath, filePath)}?t=${new Date().getTime()}`,

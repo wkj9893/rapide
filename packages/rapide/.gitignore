@@ -1,5 +1,5 @@
 # Dependency directories
-node_modules/
+/node_modules
 
 # Output of 'npm pack'
 *.tgz
@@ -7,4 +7,4 @@ node_modules/
 # generated files
 cli.js
 client.js
-cache/
+/cache

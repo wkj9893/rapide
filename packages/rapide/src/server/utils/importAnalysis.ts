@@ -1,9 +1,10 @@
+import path from "path";
 import { normalize, resolvePath } from "./path";
-import path = require("path");
 import { init, parse } from "es-module-lexer";
 import { getMetaData, Metadata, preBuild } from "../preCreateServer";
 import { cachePath } from "./path";
 import { overwrite } from "./overwrite";
+import { performance } from "perf_hooks";
 
 export default async function importAnalysis(
   code: string,

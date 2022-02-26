@@ -1,5 +1,5 @@
-import fs = require("fs");
-import path = require("path");
+import fs from "fs";
+import path from "path";
 
 const rootPath = resolveRoot();
 const cachePath = path.join(__dirname, "cache");

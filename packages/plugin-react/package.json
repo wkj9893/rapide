@@ -1,6 +1,6 @@
 {
   "name": "rapide-react",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "react plugin for rapide",
   "main": "index.js",
   "scripts": {
@@ -10,11 +10,8 @@
   "author": "wkj",
   "license": "MIT",
   "dependencies": {
-    "@babel/core": "^7.15.8",
-    "@babel/plugin-transform-react-jsx": "^7.14.9",
-    "react-refresh": "^0.10.0"
-  },
-  "devDependencies": {
-    "esbuild": "^0.13.6"
+    "@babel/core": "^7.17.5",
+    "@babel/plugin-transform-react-jsx": "^7.17.3",
+    "react-refresh": "^0.11.0"
   }
 }
