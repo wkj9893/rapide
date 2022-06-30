@@ -1,7 +1,6 @@
 import http from "http";
 import path from "path";
 import { readFile } from "fs/promises";
-import { lightBlue } from "./color";
 import { getContentType } from "..";
 import { address } from "./network";
 
@@ -44,8 +43,8 @@ export function serve(rootPath: string) {
       }
     })
     .listen(5000);
-  console.log("  > Local:    " + lightBlue(`http://localhost:5000\n`));
+  console.log("  > Local:   http://localhost:5000\n");
   if (address) {
-    console.log("  > Network:  " + lightBlue(`http://${address}:5000`));
+    console.log(`  > Network:  http://${address}:5000`);
   }
 }

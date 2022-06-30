@@ -17,5 +17,5 @@ $ yarn create rapide
 With PNPM:
 
 ```bash
-$ pnpm dlx create-rapide
+$ pnpm create rapide
 ```
